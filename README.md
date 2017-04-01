@@ -245,6 +245,43 @@ So, now your app should be ready to process realtime messaging.
 
 
 
+When it comes to history handling, one of the approaches might be purging all the messages from `NMessenger` and re-adding them.
+
+```swift
+public class MyChatMessagingVC: NMessengerViewController, IChatServiceDelegate
+{
+      override func viewDidAppear(_ animated: Bool)
+      {
+            super.viewDidAppear(animated)
+
+            // supposing `self._chatService` has been the setup in `viewDidLoad` 
+            // or injected during the screen transition
+            //
+            self._chatService.loadHistoryAsync()
+      }
+
+
+      func chatService(_ sender: IChatService, didReceiveHistory: [IChatMessage]])
+      {
+            super.clearALLMessages()
+
+            messageList.forEach
+            {
+                // using `super`to avoid side effects
+                //
+                _ = super.sendText($0.text, isIncomingMessage: $0.isIncoming)
+            }
+      }
+}
+```
+
+This approach might result in poor performance and some unwanted visual effects.
+```
+TODO: describe a better approach
+```
+
+
+
 ### NMessenger
 
 NMessenger can be added to any view. 
