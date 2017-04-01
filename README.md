@@ -152,6 +152,11 @@ In order to use your custom InputBar, override `func getInputBar()->InputBarView
 
 The main purpose of chat messages is exchanging them over the network. The topics above only cover the message rendering aspect. However, it might be unclear how to acthaully push your messages to the network or how to render the received ones. Let's dive in...
 
+Messages management the following two sub-tasks :
+* sending realtime messages
+* receivung realtime messages
+* history integration (both sent and received messages)
+
 
 
 
