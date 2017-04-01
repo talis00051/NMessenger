@@ -146,6 +146,15 @@ Both `textInputAreaView` and `textInputView` must be created in order for `NMess
 
 In order to use your custom InputBar, override `func getInputBar()->InputBarView` in `NMessengerViewController`.
 
+
+### Integration With Your Chat Service
+
+The main purpose of chat messages is exchanging them over the network. The topics above only cover the message rendering aspect. However, it might be unclear how to acthaully push your messages to the network or how to render the received ones. Let's dive in...
+
+
+
+
+
 ### NMessenger
 
 NMessenger can be added to any view. 
