@@ -222,6 +222,29 @@ I'd like to highlight the importance of using `super.sendText()` at the end of t
 You can use some other cell contruction code instead. See the ["Content Nodes and Custom Components"](https://github.com/eBay/NMessenger#content-nodes-and-custom-components) section for details.
 
 
+
+We can break down the process of "receiving a message" in two phases as well. Here they are: 
+1. Subscribe to events from your service. Usually it's done by one of iOS mechanics such as delegates, `NSNotification` or closures.
+2. Render the message using `NMessenger`
+
+Let's see how it can be done :
+
+```swift
+public class MyChatMessagingVC: NMessengerViewController, IChatServiceDelegate
+{
+      func chatService(_ sender: IChatService, didReceiveMessage message: IChatMessage)
+      {
+           // Using `super` to avoid side effects.
+           //
+           super.sendText(message.text, isIncomingMessage: true)
+      }
+}
+```
+
+So, now your app should be ready to process realtime messaging.
+
+
+
 ### NMessenger
 
 NMessenger can be added to any view. 
