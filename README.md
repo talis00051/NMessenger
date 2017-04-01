@@ -1,5 +1,6 @@
 # ![./NMessenger](https://github.com/eBay/NMessenger/blob/master/Assets/nmessenger.png)
 [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/eBay/NMessenger/blob/master/LICENSE)
+![ios](https://cocoapod-badges.herokuapp.com/v/NMessenger/badge.png)
 
 NMessenger is a fast, lightweight messenger component built on [AsyncDisplaykit](https://github.com/facebook/AsyncDisplayKit) and written in [Swift](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/). Developers can inherently achieve 60FPS scrolling and smooth transitions with rich content components.
 
