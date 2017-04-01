@@ -187,8 +187,11 @@ public protocol IChatService
 }
 ```
 
+Sending a message involves two phases : 
+1. Find out that the user has typed something and tapped "send" button. In other words, you have to handle the user's input.
+2. Pass the user's input to the networking service. This is achieved as a plain method call.
 
-In order to intercept the user's input you do not need any delegate subscriptions. It is done by overriding the `NMessengerViewController.sendText()` instance method.
+Intercepting the user's input might be not quite obvious since you do not need any delegate subscriptions. It is done by overriding the `NMessengerViewController.sendText()` instance method.
 
 
 ```swift
