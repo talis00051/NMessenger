@@ -158,6 +158,34 @@ Messages management the following two sub-tasks :
 * history integration (both sent and received messages)
 
 
+Suppose, our chat service is limited to textin. The service, described below, can use any underlying protocol (such as XMPP, Telegram, etc.). `Disclaimer: your chat service might look differently`.
+
+```swift
+public protocol IChatMessage
+{
+    var text: String { get }
+    var isIncoming: Bool { get }
+}
+
+public protocol IChatServiceDelegate
+{
+    func chatServiceDidConnect(_ sender: IChatService)
+    func chatService(_ sender: IChatService, didSendMessage: IChatMessage)
+    func chatService(_ sender: IChatService, didReceiveMessage: IChatMessage)
+    func chatService(_ sender: IChatService, didReceiveHistory: [IChatMessage]])
+
+    // TODO: error handling methods are skipped for conciseness
+}
+
+public protocol IChatService
+{
+    func connectAsync()
+    func disconnectAsync()
+
+    func sendTextAsync(_ message: String)
+    func loadHistoryAsync()
+}
+```
 
 
 
