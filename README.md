@@ -188,6 +188,28 @@ public protocol IChatService
 ```
 
 
+In order to intercept the user's input you do not need any delegate subscriptions. It is done by overriding the `NMessengerViewController.sendText()` instance method.
+
+
+```swift
+public class MyChatMessagingVC: NMessengerViewController, IChatServiceDelegate
+{
+    override func sendText(_ text: String, isIncomingMessage:Bool) -> GeneralMessengerCell
+    {
+         let shouldSendToServer = !isIncomingMessage
+
+         if (shouldSendToServer)
+         {
+            // trigger network service
+            self.controller?.sendMessageAsync(text)
+         }
+
+         // otherwise - just render 
+         return super.sendText(text, isIncomingMessage: isIncomingMessage)
+    }
+}
+```
+
 
 ### NMessenger
 
