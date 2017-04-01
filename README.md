@@ -205,10 +205,18 @@ public class MyChatMessagingVC: NMessengerViewController, IChatServiceDelegate
          }
 
          // otherwise - just render 
+         // `super` is critical to avoid recursion and "just render"
          return super.sendText(text, isIncomingMessage: isIncomingMessage)
     }
 }
 ```
+
+I'd like to highlight the importance of using `super.sendText()` at the end of the function. If `self` is used in this case, you're going to
+1. end up with infinite recursion
+2. eventually crash due to "stack overflow" reason
+3. flood the chat with repeated messages
+
+You can use some other cell contruction code instead. See the ["Content Nodes and Custom Components"](https://github.com/eBay/NMessenger#content-nodes-and-custom-components) section for details.
 
 
 ### NMessenger
