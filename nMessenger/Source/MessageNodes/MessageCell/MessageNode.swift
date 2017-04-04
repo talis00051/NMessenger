@@ -143,70 +143,161 @@ open class MessageNode: GeneralMessengerCell {
     /**
      Overriding layoutSpecThatFits to specifiy relatiohsips between elements in the cell
      */
+    private func configureLayoutSpecs(forAvatar tmpAvatar: ASDisplayNode,
+                                        withSpacer spacer: ASLayoutSpec,
+                                          justifyLocation: ASStackLayoutJustifyContent,
+                                          constrainedSize: ASSizeRange)
+    -> ASLayoutSpec!
+    {
+        var layoutSpecs: ASLayoutSpec!
+        
+        let tmpSizeMesuare = tmpAvatar.measure(constrainedSize.max)
+        let avatarSizeLayout = ASStaticLayoutSpec(children: [tmpAvatar])
+        self.avatarButtonNode.preferredFrameSize = tmpSizeMesuare
+        let avatarButtonSizeLayout = ASStaticLayoutSpec(children: [self.avatarButtonNode])
+        
+        let avatarBackStack = ASBackgroundLayoutSpec(child: avatarButtonSizeLayout,
+                                                     background: avatarSizeLayout)
+        
+        let width =
+            constrainedSize.max.width
+                - tmpSizeMesuare.width
+                - self.cellPadding.left
+                - self.cellPadding.right
+                - avatarInsets.left
+                - avatarInsets.right
+                - self.messageOffset
+        
+        let tmpSizeRange =
+            ASRelativeSizeRangeMake(
+                ASRelativeSizeMakeWithCGSize(CGSize.zero),
+                ASRelativeSizeMake(
+                    ASRelativeDimensionMakeWithPoints(width),
+                    ASRelativeDimensionMakeWithPercent(1)))
+        
+        self.contentNode!.sizeRange = tmpSizeRange
+        let contentSizeLayout = ASStaticLayoutSpec(children: [self.contentNode!])
+        
+        let ins = ASInsetLayoutSpec(insets: self.avatarInsets,
+                                    child: avatarBackStack)
+        
+        let cellOrientation =
+            isIncomingMessage
+                ? [ins, contentSizeLayout]
+                : [contentSizeLayout,ins]
+        
+        layoutSpecs =
+            ASStackLayoutSpec(
+                direction: .horizontal,
+                spacing: 0,
+                justifyContent: justifyLocation,
+                alignItems: .end,
+                children: cellOrientation)
+        
+        contentSizeLayout.flexShrink = true
+        
+        return layoutSpecs
+    }
+    
+    private func configureLayoutSpecsWithoutAvatar(withSpacer spacer: ASLayoutSpec,
+                                                     justifyLocation: ASStackLayoutJustifyContent,
+                                                     constrainedSize: ASSizeRange)
+    -> ASLayoutSpec!
+    {
+        var layoutSpecs: ASLayoutSpec!
+        
+        let width =
+            constrainedSize.max.width
+                - self.cellPadding.left
+                - self.cellPadding.right
+                - self.messageOffset
+        
+        let tmpSizeRange =
+            ASRelativeSizeRangeMake(
+                ASRelativeSizeMakeWithCGSize(CGSize.zero),
+                ASRelativeSizeMake(
+                    ASRelativeDimensionMakeWithPoints(width),
+                    ASRelativeDimensionMakeWithPercent(1)))
+        
+        self.contentNode!.sizeRange = tmpSizeRange
+        let contentSizeLayout = ASStaticLayoutSpec(children: [self.contentNode!])
+        
+        layoutSpecs =
+            ASStackLayoutSpec(
+                direction: .horizontal,
+                spacing: 0,
+                justifyContent: justifyLocation,
+                alignItems: .end,
+                children: [spacer, contentSizeLayout])
+        
+        contentSizeLayout.flexShrink = true
+        
+        return layoutSpecs
+    }
+    
+    /**
+     Overriding layoutSpecThatFits to specifiy relatiohsips between elements in the cell
+     */
     override open func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
+        
         var layoutSpecs: ASLayoutSpec!
         
         //location dependent on sender
-        let justifyLocation = isIncomingMessage ? ASStackLayoutJustifyContent.start : ASStackLayoutJustifyContent.end
+        let justifyLocation =
+            isIncomingMessage
+                ? ASStackLayoutJustifyContent.start
+                : ASStackLayoutJustifyContent.end
         
-        if let tmpAvatar = self.avatarNode {
-            let tmpSizeMeasure = tmpAvatar.layoutThatFits(ASSizeRange(min: CGSize.zero, max: constrainedSize.max))
-            
-            let avatarSizeLayout = ASAbsoluteLayoutSpec()
-            avatarSizeLayout.sizing = .sizeToFit
-            avatarSizeLayout.children = [tmpAvatar]
-            
-            self.avatarButtonNode.style.width = ASDimension(unit: .points, value: tmpSizeMeasure.size.width)
-            self.avatarButtonNode.style.height = ASDimension(unit: .points, value: tmpSizeMeasure.size.height)
-            
-            let avatarButtonSizeLayout = ASAbsoluteLayoutSpec()
-            avatarButtonSizeLayout.sizing = .sizeToFit
-            avatarButtonSizeLayout.children = [self.avatarButtonNode]
-            let avatarBackStack = ASBackgroundLayoutSpec(child: avatarButtonSizeLayout, background: avatarSizeLayout)
-            
-            let width = constrainedSize.max.width - tmpSizeMeasure.size.width - self.cellPadding.left - self.cellPadding.right - avatarInsets.left - avatarInsets.right - self.messageOffset
-
-            contentNode?.style.maxWidth = ASDimension(unit: .points, value: width * self.maxWidthRatio)
-            contentNode?.style.maxHeight = ASDimension(unit: .points, value: self.maxHeight)
-            
-            let contentSizeLayout = ASAbsoluteLayoutSpec()
-            contentSizeLayout.sizing = .sizeToFit
-            contentSizeLayout.children = [self.contentNode!]
-            
-            let ins = ASInsetLayoutSpec(insets: self.avatarInsets, child: avatarBackStack)
-            
-            let cellOrientation = isIncomingMessage ? [ins, contentSizeLayout] : [contentSizeLayout,ins]
-            
-            layoutSpecs = ASStackLayoutSpec(direction: .horizontal, spacing: 0, justifyContent: justifyLocation, alignItems: .end, children: cellOrientation)
-            contentSizeLayout.style.flexShrink = 1
-        } else {
-            let width = constrainedSize.max.width - self.cellPadding.left - self.cellPadding.right - self.messageOffset
-            
-            contentNode?.style.maxWidth = ASDimension(unit: .points, value: width * self.maxWidthRatio)
-            contentNode?.style.maxHeight = ASDimension(unit: .points, value: self.maxHeight)
-        
-            contentNode?.style.flexGrow = 1
-        
-            let contentSizeLayout = ASAbsoluteLayoutSpec()
-            contentSizeLayout.sizing = .sizeToFit
-            contentSizeLayout.children = [self.contentNode!]
-            
-            layoutSpecs = ASStackLayoutSpec(direction: .horizontal, spacing: 0, justifyContent: justifyLocation, alignItems: .end, children: [createSpacer(), contentSizeLayout])
-            contentSizeLayout.style.flexShrink = 1
+        if let tmpAvatar = self.avatarNode
+        {
+            layoutSpecs = self.configureLayoutSpecs(forAvatar: tmpAvatar,
+                                                   withSpacer: createSpacer(),
+                                              justifyLocation: justifyLocation,
+                                              constrainedSize: constrainedSize)
+        }
+        else
+        {
+            layoutSpecs = self.configureLayoutSpecsWithoutAvatar(withSpacer: createSpacer(),
+                                                            justifyLocation: justifyLocation,
+                                                            constrainedSize: constrainedSize)
         }
         
         if let headerNode = self.headerNode
         {
-            layoutSpecs = ASStackLayoutSpec(direction: .vertical, spacing: self.headerSpacing, justifyContent: .start, alignItems: isIncomingMessage ? .start : .end, children: [headerNode, layoutSpecs])
+            layoutSpecs = ASStackLayoutSpec(
+                direction: .vertical,
+                  spacing: self.headerSpacing,
+           justifyContent: .start,
+               alignItems: (isIncomingMessage ? .start : .end),
+                 children: [headerNode, layoutSpecs])
         }
         
-        if let footerNode = self.footerNode {
-            layoutSpecs = ASStackLayoutSpec(direction: .vertical, spacing: self.footerSpacing, justifyContent: .start, alignItems: isIncomingMessage ? .start : .end, children: [layoutSpecs, footerNode])
+        if let footerNode = self.footerNode
+        {
+            layoutSpecs = ASStackLayoutSpec(
+                direction: .vertical,
+                  spacing: self.footerSpacing,
+           justifyContent: .start,
+               alignItems: (isIncomingMessage ? .start : .end),
+                 children: [layoutSpecs, footerNode])
         }
         
-        let cellOrientation = isIncomingMessage ? [createSpacer(), layoutSpecs!] : [layoutSpecs!, createSpacer()]
-        let layoutSpecs2 = ASStackLayoutSpec(direction: .horizontal, spacing: self.messageOffset, justifyContent: justifyLocation, alignItems: .end, children: cellOrientation)
-        return ASInsetLayoutSpec(insets: self.cellPadding, child: layoutSpecs2)
+        let cellOrientation =
+            self.isIncomingMessage
+                ? [createSpacer(), layoutSpecs!]
+                : [layoutSpecs!, createSpacer()]
+        
+        layoutSpecs =
+            ASStackLayoutSpec(
+                direction: .horizontal,
+                  spacing: self.messageOffset,
+           justifyContent: justifyLocation,
+               alignItems: .end,
+                 children: cellOrientation)
+        
+        layoutSpecs = ASInsetLayoutSpec(insets: self.cellPadding,
+                                         child: layoutSpecs)
+        return layoutSpecs
     }
     
     
