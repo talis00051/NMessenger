@@ -22,6 +22,9 @@ open class NMessengerBarView: InputBarView, UITextViewDelegate, CameraViewDelega
     //MARK: IBOutlets
     //@IBOutlet for InputBarView
     @IBOutlet open weak var inputBarView: UIView!
+    
+    @IBOutlet open weak var photoPickerButton: UIButton!
+    
     //@IBOutlet for send button
     @IBOutlet open weak var sendButton: UIButton!
     //@IBOutlets NSLayoutConstraint input area view height
@@ -35,7 +38,10 @@ open class NMessengerBarView: InputBarView, UITextViewDelegate, CameraViewDelega
     //CGFloat to the fine the number of rows a user can type
     open var numberOfRows:CGFloat = 3
     //String as placeholder text in input view
-    open var inputTextViewPlaceholder: String = "NMessenger"
+    open var inputTextViewPlaceholder: String =
+        Bundle.main.localizedString(forKey: "Chat.InputField.PlaceholderText",
+                                     value: "NMessenger",
+                                     table: nil)
     {
         willSet(newVal)
         {
@@ -64,6 +70,16 @@ open class NMessengerBarView: InputBarView, UITextViewDelegate, CameraViewDelega
         super.init(controller: controller)
         loadFromBundle()
     }
+    
+    public required init(controller: NMessengerViewController,
+                            nibName: String,
+                             bundle: Bundle)
+    {
+        super.init(controller: controller)
+        
+        self.loadFrom(bundle: bundle, nibName: nibName)
+    }
+    
     /**
      Initialiser the view.
      - parameter controller: Must be NMessengerViewController. Sets controller for the view.
@@ -87,8 +103,23 @@ open class NMessengerBarView: InputBarView, UITextViewDelegate, CameraViewDelega
     /**
      Loads the view from nib file InputBarView and does intial setup.
      */
-    fileprivate func loadFromBundle() {
-        _ = Bundle(for: NMessengerViewController.self).loadNibNamed("NMessengerBarView", owner: self, options: nil)?[0] as! UIView
+    fileprivate func loadFromBundle()
+    {
+        let nmessengerBundle = Bundle(for: NMessengerViewController.self)
+        let nibName = "NMessengerBarView"
+        
+        
+        self.loadFrom(bundle: nmessengerBundle, nibName: nibName)
+    }
+    
+    fileprivate func loadFrom(bundle: Bundle,
+                             nibName: String)
+    {
+        let nibObjects = bundle.loadNibNamed( nibName,
+                                       owner: self,
+                                     options: nil)
+        /*let fileOwnerSelf*/ _ = nibObjects?[0] as! UIView
+        
         self.addSubview(inputBarView)
         inputBarView.frame = self.bounds
         textInputView.delegate = self
@@ -176,9 +207,9 @@ open class NMessengerBarView: InputBarView, UITextViewDelegate, CameraViewDelega
         var newFrame = textView.frame
         newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
         
-        textInputViewHeight.constant = newFrame.size.height
+        self.textInputViewHeight.constant = newFrame.size.height
         
-        textInputAreaViewHeight.constant = newFrame.size.height+10
+        self.textInputAreaViewHeight.constant = newFrame.size.height+10
         
         
         
