@@ -51,7 +51,16 @@ open class NMessenger: UIView {
         let batchFetchLock: ASBatchContext
         
         //initializer
-        static let initialState = NMessengerState(itemCount: 0, lastContentOffset: 0, scrollDirection: ASScrollDirection(), cellBufferStartIndex: Int.max, cellBuffer: [GeneralMessengerCell](), typingIndicators: [GeneralMessengerCell](),messageLock: DispatchSemaphore(value: 1), batchFetchLock: ASBatchContext())
+        static let initialState =
+            NMessengerState(
+                        itemCount: 0,
+                lastContentOffset: 0,
+                  scrollDirection: ASScrollDirection(),
+             cellBufferStartIndex: Int.max,
+                       cellBuffer: [GeneralMessengerCell](),
+                 typingIndicators: [GeneralMessengerCell](),
+                      messageLock: DispatchSemaphore(value: 1),
+                   batchFetchLock: ASBatchContext())
     }
     
     //MARK: Private variables
@@ -110,7 +119,11 @@ open class NMessenger: UIView {
         messengerNode.delegate = self
         messengerNode.dataSource = self
         
-        messengerNode.setTuningParameters(ASRangeTuningParameters(leadingBufferScreenfuls: 2, trailingBufferScreenfuls: 1), for: .display)
+        let tuningParameters =
+            ASRangeTuningParameters(
+                 leadingBufferScreenfuls: 2,
+                trailingBufferScreenfuls: 1)
+        messengerNode.setTuningParameters(tuningParameters, for: .display)
         
         messengerNode.view.separatorStyle = UITableViewCellSeparatorStyle.none
         messengerNode.view.allowsSelection = false
@@ -197,13 +210,31 @@ open class NMessenger: UIView {
      */
     open func endBatchFetchWithMessages(_ messages: [GeneralMessengerCell]) {
         //make sure we are in the process of a batch fetch
+        
+        let addMessageCompletionBlock =
+        {
+            self.state.batchFetchLock.completeBatchFetching(true)
+        }
+        
+        let removeCellsCompletionBlock =
+        {
+            self.addMessages( messages,
+                     atIndex: 0,
+            scrollsToMessage: false,
+                   animation: .none,
+                  completion: addMessageCompletionBlock)
+        }
+        
         if self.state.batchFetchLock.isFetching() {
             self.waitForMessageLock {
-                self.removeCells(atIndexes: [IndexPath(row: 0, section: NMessengerSection.messenger.rawValue)], animation: .none, completion: {
-                    self.addMessages(messages, atIndex: 0, scrollsToMessage: false, animation: .none, completion: {
-                        self.state.batchFetchLock.completeBatchFetching(true)
-                    })
-                })
+
+                let cellToRemoveIndex =
+                    IndexPath(row: 0, section: NMessengerSection.messenger.rawValue)
+                
+                self.removeCells(
+                            atIndexes: [cellToRemoveIndex],
+                            animation: .none,
+                           completion: removeCellsCompletionBlock)
             }
         }
     }
@@ -555,20 +586,30 @@ open class NMessenger: UIView {
      - parameter animation: an animation to remove the cells
      - parameter completion: closure to signify the end of the remove event
      */
-    fileprivate func removeCells(atIndexes indexes: [IndexPath], animation: UITableViewRowAnimation, completion: (()->Void)?) {
-        DispatchQueue.main.async {
+    fileprivate func removeCells(atIndexes indexes: [IndexPath],
+                                         animation: UITableViewRowAnimation,
+                                        completion: (()->Void)?)
+    {
+        DispatchQueue.main.async
+        {
             //update the state
             self.state.itemCount -= indexes.count
             
             //done animating
             let animated = animation != .none
             
-            //remove rows
-            self.messengerNode.performBatch(animated: animated, updates: { 
+            let updatesBlock =
+            {
                 self.messengerNode.deleteRows(at: indexes, with: animation)
-            }, completion: { (finised) in
+            }
+            
+            //remove rows
+            self.messengerNode.performBatch(animated: animated,
+                                             updates: updatesBlock)
+            {
+                (finised) in
                 completion?()
-            })
+            }
         }
     }
     
@@ -579,26 +620,43 @@ open class NMessenger: UIView {
      - parameter startIndex: Where to insert or delete the cells
      - parameter completion: Closure which notifies that the table is done adding cells
      */
-    fileprivate func renderDiff(_ oldState: NMessengerState, startIndex: Int, animation: UITableViewRowAnimation, completion: (()->Void)?) {
-        
+    fileprivate func renderDiff(_ oldState: NMessengerState,
+                                startIndex: Int,
+                                 animation: UITableViewRowAnimation,
+                                completion: (()->Void)?)
+    {
         //done animating
         let animated = animation != .none
         
-        self.messengerNode.performBatch(animated: animated, updates: { 
+        
+        let updatesBlock =
+        {
             // Add or remove items
-            let rowCountChange = state.itemCount - oldState.itemCount
-            if rowCountChange > 0 {
-                let indexPaths = (startIndex..<startIndex + rowCountChange).map { index in
+            let rowCountChange = self.state.itemCount - oldState.itemCount
+            if rowCountChange > 0
+            {
+                let indexPaths = (startIndex..<startIndex + rowCountChange).map
+                {
+                    index in
                     IndexPath(row: index, section: NMessengerSection.messenger.rawValue)
                 }
                 self.messengerNode.insertRows(at: indexPaths, with: animation)
-            } else if rowCountChange < 0 {
-                let indexPaths = (startIndex..<startIndex - rowCountChange).map { index in
+            }
+            else if rowCountChange < 0
+            {
+                let indexPaths = (startIndex..<startIndex - rowCountChange).map
+                {
+                    index in
                     IndexPath(row: index, section: NMessengerSection.messenger.rawValue)
                 }
                 self.messengerNode.deleteRows(at: indexPaths, with: animation)
             }
-        }) { (finished) in
+        }
+            
+        self.messengerNode.performBatch(animated: animated,
+                                         updates: updatesBlock)
+        {
+            (finished) in
             completion?()
         }
     }
@@ -737,12 +795,20 @@ extension NMessenger {
 extension NMessenger: ASTableDelegate, ASTableDataSource {
     
     //MARK: footer
-    public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+    public func tableView(_ tableView: UITableView,
+       viewForFooterInSection section: Int) -> UIView?
+    {
         return UIView()
     }
     
-    public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if section == NMessengerSection.messenger.rawValue {
+    public func tableView(_ tableView: UITableView,
+     heightForFooterInSection section: Int) -> CGFloat
+    {
+        let isMessageSection =
+            (section == NMessengerSection.messenger.rawValue)
+        
+        if isMessageSection
+        {
             return 5
         }
         
@@ -750,12 +816,20 @@ extension NMessenger: ASTableDelegate, ASTableDataSource {
     }
     
     //MARK: header
-    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    public func tableView(_ tableView: UITableView,
+       viewForHeaderInSection section: Int) -> UIView?
+    {
         return UIView()
     }
     
-    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == NMessengerSection.messenger.rawValue {
+    public func tableView(_ tableView: UITableView,
+     heightForHeaderInSection section: Int) -> CGFloat
+    {
+        let isMessageSection =
+            (section == NMessengerSection.messenger.rawValue)
+        
+        if (isMessageSection)
+        {
             return 5
         }
         
@@ -763,20 +837,33 @@ extension NMessenger: ASTableDelegate, ASTableDataSource {
     }
     
     //MARK: ASTableNode
-    public func shouldBatchFetch(for tableView: ASTableView) -> Bool {
+    public func shouldBatchFetch(for tableView: ASTableView) -> Bool
+    {
         return false
     }
     
-    public func tableView(_ tableView: ASTableView, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
+    public func tableView(_ tableView: ASTableView,
+               nodeForRowAt indexPath: IndexPath) -> ASCellNode
+    {
+        let currentRow =
+            (indexPath as NSIndexPath).row
+        let isCurrentRowOutsideCellBuffer: Bool =
+            (currentRow >= self.state.cellBufferStartIndex)
+        let currentRowOffset =
+            currentRow - self.state.cellBufferStartIndex
         
-        switch (indexPath as NSIndexPath).section {
+        switch (indexPath as NSIndexPath).section
+        {
         case NMessengerSection.messenger.rawValue:
-            if (indexPath as NSIndexPath).row >= self.state.cellBufferStartIndex {
-                return self.state.cellBuffer[(indexPath as NSIndexPath).row - self.state.cellBufferStartIndex]
+            if isCurrentRowOutsideCellBuffer
+            {
+                return self.state.cellBuffer[currentRowOffset]
             }
             return tableView.nodeForRow(at: indexPath)!
+        
         case NMessengerSection.typingIndicator.rawValue:
-            return self.state.typingIndicators[(indexPath as NSIndexPath).row]
+            return self.state.typingIndicators[currentRow]
+            
         default: //should never come here
             return ASCellNode()
         }
@@ -786,10 +873,18 @@ extension NMessenger: ASTableDelegate, ASTableDataSource {
         return 2
     }
     
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
+    public func tableView(_ tableView: UITableView,
+        numberOfRowsInSection section: Int) -> Int
+    {
+        let isMessageSection =
+            (section == NMessengerSection.messenger.rawValue)
+        
+        if (isMessageSection)
+        {
             return self.state.itemCount
-        } else {
+        }
+        else
+        {
             return self.state.typingIndicators.count
         }
     }
