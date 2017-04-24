@@ -37,7 +37,7 @@ open class InputBarView: UIView, InputBarViewProtocol {
      */
     public required init()
     {
-        super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        super.init(frame: CGRect.zero)
     }
     
     public required init(controller:NMessengerViewController) {
