@@ -20,7 +20,8 @@ open class GeneralMessengerCell: ASCellNode {
     
     // MARK: Public Variables
     /** UIEdgeInsets for cell*/
-    open var cellPadding: UIEdgeInsets = UIEdgeInsetsMake(0.0, 0.0, 0.0, 0.0)
+    open var cellPadding: UIEdgeInsets = UIEdgeInsets.zero
+
     /** UIViewController that holds the cell. Allows the cell the present View Controllers*/
     open weak var currentViewController: UIViewController?
     /** The current table in which this node resides*/

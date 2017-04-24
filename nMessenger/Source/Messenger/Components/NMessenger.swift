@@ -471,37 +471,68 @@ open class NMessenger: UIView {
      - parameter scrollsToMessage: If marked true, the tableview will scroll to the newly added
      message
      */
-    fileprivate func addMessages(_ messages: [GeneralMessengerCell], atIndex index: Int, scrollsToMessage: Bool, animation: UITableViewRowAnimation, completion: (()->Void)?) {
-        DispatchQueue.main.async {
-            if messages.count > 0 {
+    fileprivate func addMessages(_ messages: [GeneralMessengerCell],
+                              atIndex index: Int,
+                           scrollsToMessage: Bool,
+                                  animation: UITableViewRowAnimation,
+                                 completion: (()->Void)?)
+    {
+        DispatchQueue.main.async
+        {
+            if messages.count > 0
+            {
                 //set the new state
+                //
                 let oldState = self.state
                 self.state.itemCount += messages.count
+                
                 //add new cells to the buffer and set their start index
+                //
                 self.state.cellBufferStartIndex = index
                 self.state.cellBuffer = messages
+                
                 //set current table
-                for message in messages {
+                //
+                for message in messages
+                {
                     message.currentTableNode = self.messengerNode
                 }
-                //render new cells
-                self.renderDiff(oldState, startIndex: self.state.cellBufferStartIndex, animation: animation, completion: {
-                    DispatchQueue.main.async {
+                
+                let renderDiffCompletionBlock =
+                {
+                    DispatchQueue.main.async
+                    {
                         //reset start index
                         self.state.cellBufferStartIndex = Int.max
                         self.state.cellBuffer = [GeneralMessengerCell]()
                         //scroll to the message
-                        if scrollsToMessage {
-                            if let indexPath = self.pickLastIndexPath() {
-                                self.scrollToIndex((indexPath as NSIndexPath).row, inSection: (indexPath as NSIndexPath).section, atPosition: .bottom, animated: true)
+                        if scrollsToMessage
+                        {
+                            if let indexPath = self.pickLastIndexPath()
+                            {
+                                let castedIndexPath = (indexPath as NSIndexPath)
+                                
+                                self.scrollToIndex( castedIndexPath.row,
+                                         inSection: castedIndexPath.section,
+                                        atPosition: .bottom,
+                                          animated: true)
                             }
                         }
                         //unlock the semaphore
                         self.state.messageLock.signal()
                         completion?()
                     }
-                })
-            } else {
+                }
+                
+                //render new cells
+                //
+                self.renderDiff(oldState,
+                     startIndex: self.state.cellBufferStartIndex,
+                      animation: animation,
+                     completion: renderDiffCompletionBlock)
+            }
+            else
+            {
                 //unlock the semaphore
                 self.state.messageLock.signal()
                 completion?()
