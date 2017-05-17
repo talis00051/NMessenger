@@ -35,22 +35,38 @@ fileprivate func >= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
 }
 
 
-open class NMessengerViewController: UIViewController, UITextViewDelegate, NMessengerDelegate, UIGestureRecognizerDelegate {
-    
+open class NMessengerViewController: UIViewController
+    , UITextViewDelegate
+    , NMessengerDelegate
+    , UIGestureRecognizerDelegate
+{
     //MARK: Views
     //This is messenger view
+    //
     open var messengerView: NMessenger!
+    
     //This is input view
+    //
     open var inputBarView: InputBarView!
     
     //MARK: Private Variables
     //Bool to indicate if the keyboard is open
+    //
     open fileprivate(set) var isKeyboardIsShown : Bool = false
+    
     //NSLayoutConstraint for the input bar spacing from the bottom
+    //
     fileprivate var inputBarBottomSpacing:NSLayoutConstraint = NSLayoutConstraint()
+    
     //MARK: Public Variables
     //UIEdgeInsets for padding for each message
-    open var messagePadding: UIEdgeInsets = UIEdgeInsets(top: 5, left: 0, bottom: 5, right: 0)
+    //
+    open var messagePadding: UIEdgeInsets =
+        UIEdgeInsets(top: 5,
+                    left: 0,
+                  bottom: 5,
+                   right: 0)
+    
     /** A shared bubble configuration to use for new messages. Defaults to **SharedBubbleConfiguration***/
     open var sharedBubbleConfiguration: BubbleConfigurationProtocol = StandardBubbleConfiguration()
     
@@ -60,7 +76,8 @@ open class NMessengerViewController: UIViewController, UITextViewDelegate, NMess
      Initialiser for the controller.
      Adds observers
      */
-    public init() {
+    public init()
+    {
         super.init(nibName: nil, bundle: nil)
         self.addObservers()
     }
@@ -72,24 +89,59 @@ open class NMessengerViewController: UIViewController, UITextViewDelegate, NMess
      - parameter nibBundleOrNil: Can be NSBundle
      Adds observers
      */
-    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    public override init(nibName nibNameOrNil: String?,
+                        bundle nibBundleOrNil: Bundle?)
+    {
+        super.init(nibName: nibNameOrNil  ,
+                    bundle: nibBundleOrNil)
+        
         self.addObservers()
     }
+    
+    
     /**
      Initialiser from xib
      Adds observers
      */
-    public required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder)
+    {
         super.init(coder: aDecoder)
         self.addObservers()
+    }
+    
+    open func onImagesPicked(_ images: [UIImage])
+    {
+        // legacy implementation
+        //
+        images.forEach
+        {
+            _ = self.sendImage($0, isIncomingMessage: false)
+        }
+        
+        
+        // TODO: might be different
+        // if mixed "text and image" content is allowed
+        //
+    }
+    
+    open func onSendButtonTapped(havingText currentText: String)
+    {
+        // legacy implementation
+        //
+        _ = self.sendText( currentText,
+        isIncomingMessage: false)
+        
+        // TODO: this might be not just text
+        // if mixed "text + images" content is allowed
+        //
     }
     
     /**
      Deinitialiser for controller.
      Removes observers
      */
-    deinit {
+    deinit
+    {
         self.removeObservers()
     }
     
@@ -97,13 +149,18 @@ open class NMessengerViewController: UIViewController, UITextViewDelegate, NMess
     /**
      Adds observer for UIKeyboardWillChangeFrameNotification
      */
-    fileprivate func addObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(NMessengerViewController.keyboardNotification(_:)), name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
+    fileprivate func addObservers()
+    {
+        NotificationCenter.default.addObserver( self,
+                                      selector: #selector(NMessengerViewController.keyboardNotification(_:)),
+                                          name: NSNotification.Name.UIKeyboardWillChangeFrame,
+                                        object: nil)
     }
     /**
      Removes observer for UIKeyboardWillChangeFrameNotification
      */
-    fileprivate func removeObservers() {
+    fileprivate func removeObservers()
+    {
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -112,29 +169,42 @@ open class NMessengerViewController: UIViewController, UITextViewDelegate, NMess
      Overriding viewDidLoad to setup the view controller
      Calls helper methods
      */
-    override open func viewDidLoad() {
+    override open func viewDidLoad()
+    {
         super.viewDidLoad()
+        
         self.view.backgroundColor = UIColor.white
+        
         //load views
-        loadMessengerView()
-        loadInputView()
-        setUpConstraintsForViews()
+        //
+        self.loadMessengerView()
+        self.loadInputView()
+        self.setUpConstraintsForViews()
+        
         //swipe down
-        let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(NMessengerViewController.respondToSwipeGesture(_:)))
+        //
+        let swipeDown =
+            UISwipeGestureRecognizer(target: self,
+                                     action: #selector(NMessengerViewController.respondToSwipeGesture(_:)))
+        
         swipeDown.direction = UISwipeGestureRecognizerDirection.down
         self.inputBarView.textInputAreaView.addGestureRecognizer(swipeDown)
     }
     
-    override open func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
     
     //MARK: Controller LifeCycle helper methods
     /**
      Creates NMessenger view and adds it to the view
      */
-    fileprivate func loadMessengerView() {
-        self.messengerView = NMessenger(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height - 63))
+    fileprivate func loadMessengerView()
+    {
+        let messengerViewFrame =
+            CGRect(x: 0,
+                   y: 0,
+               width: self.view.frame.size.width,
+              height: self.view.frame.size.height - 63)
+        
+        self.messengerView = NMessenger(frame: messengerViewFrame)
         messengerView.delegate = self
         self.view.addSubview(self.messengerView)
     }
