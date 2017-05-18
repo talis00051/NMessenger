@@ -20,8 +20,8 @@ public protocol ICameraViewController : class
 {
     weak var cameraDelegate: CameraViewDelegate?   { get set }
     
-    var cameraAuthStatus   : AVAuthorizationStatus { get set }
-    var photoLibAuthStatus : PHAuthorizationStatus { get set }
+    var cameraAuthStatus   : AVAuthorizationStatus { get }
+    var photoLibAuthStatus : PHAuthorizationStatus { get }
 
     func isCameraPermissionGranted(_ completion:@escaping CameraPermissionCallback)
     func requestPhotoLibraryPermissions(_ completion: @escaping PhotoLibraryPermissionCallback)

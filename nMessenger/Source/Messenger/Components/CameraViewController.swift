@@ -722,7 +722,18 @@ open class CameraViewController: UIImagePickerController
     open func isCameraPermissionGranted(
         _ completion:@escaping CameraPermissionCallback)
     {
-        self.requestAccessForCamera(completion)
+        let callbackHook: CameraPermissionCallback =
+        {
+            [weak weakSelf = self]
+            (granted) in
+            
+            weakSelf?.cameraAuthStatus =
+                AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
+            
+            completion(granted)
+        }
+        
+        self.requestAccessForCamera(callbackHook)
     }
     /**
      Requests access for the camera and calls completion block
@@ -745,7 +756,11 @@ open class CameraViewController: UIImagePickerController
     {
         PHPhotoLibrary.requestAuthorization
         {
+            [weak weakSelf = self]
             status in
+     
+            weakSelf?.photoLibAuthStatus =
+                PHPhotoLibrary.authorizationStatus()
             
             switch status
             {

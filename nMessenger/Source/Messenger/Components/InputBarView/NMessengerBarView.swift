@@ -377,9 +377,6 @@ open class NMessengerBarView: InputBarView
                 
                 if(granted)
                 {
-                    self.cameraVcProto.cameraAuthStatus =
-                        AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
-                    
                     DispatchQueue.main.async
                     {
                         self.controller.present( self.cameraVC,
@@ -389,9 +386,6 @@ open class NMessengerBarView: InputBarView
                 }
                 else
                 {
-                    self.cameraVcProto.cameraAuthStatus =
-                        AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
-                    
                     if(photoLibAuthStatus != PHAuthorizationStatus.authorized)
                     {
                         self.cameraVcProto.requestPhotoLibraryPermissions
@@ -400,9 +394,6 @@ open class NMessengerBarView: InputBarView
                             
                             if(granted)
                             {
-                                self.cameraVcProto.photoLibAuthStatus =
-                                    PHPhotoLibrary.authorizationStatus()
-                                
                                 DispatchQueue.main.async
                                 {
                                     self.controller.present( self.cameraVC,
@@ -415,9 +406,6 @@ open class NMessengerBarView: InputBarView
                             }
                             else
                             {
-                                self.cameraVcProto.photoLibAuthStatus =
-                                    PHPhotoLibrary.authorizationStatus()
-                                
                                 ModalAlertUtilities.postGoToSettingToEnableCameraAndLibraryModal(fromController: self.controller)
                             }
                         }
@@ -435,10 +423,7 @@ open class NMessengerBarView: InputBarView
             })
         }
         else
-        {//also check if photo gallery permissions are granted
-            self.cameraVcProto.cameraAuthStatus =
-                AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
-            
+        {
             DispatchQueue.main.async
             {
                 self.controller.present( self.cameraVC,
