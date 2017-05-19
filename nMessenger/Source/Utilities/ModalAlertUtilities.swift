@@ -35,23 +35,39 @@ open class ModalAlertUtilities {
      - parameter controller: Must be UIViewController. Where to present to alert.
      Alert tells user to go into setting to enable permission for both camera and photo library
      */
-    class func postGoToSettingToEnableCameraAndLibraryModal(fromController controller: UIViewController)
+    class func postGoToSettingToEnableCameraAndLibraryModal(
+                                        fromController controller: UIViewController)
     {
-        let alert = UIAlertController(title: "", message: "Allow access to your camera & photo library to start uploading photos with N1", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive) { (action) in
+        // TODO: should be localized or injected from app
+        //
+        let message = "Allow access to your camera & photo library to start uploading photos with N1"
+        
+        let alert = UIAlertController(title: "",
+                                    message: message,
+                             preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
+        {
+            (action) in
             alert.dismiss(animated: true, completion: nil)
         }
-        let settingsAction = UIAlertAction(title: "Go to Settings", style: .default) { (alertAction) in
-            if let appSettings = URL(string: UIApplicationOpenSettingsURLString) {
+        
+        let settingsAction = UIAlertAction(title: "Go to Settings", style: .default)
+        {
+            (alertAction) in
+            if let appSettings = URL(string: UIApplicationOpenSettingsURLString)
+            {
                 UIApplication.shared.openURL(appSettings)
             }
         }
+        
         alert.addAction(settingsAction)
         alert.addAction(cancelAction)
         
-        DispatchQueue.main.async(execute: { () -> Void in
+        DispatchQueue.main.async
+        {
             controller.present(alert, animated: true, completion: nil)
-        })
+        }
     }
     /**
      Camera permission alert message
