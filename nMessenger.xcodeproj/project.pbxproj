@@ -10,10 +10,11 @@
 		0D08CA9D1ECC822D00777D8D /* ICameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D08CA9C1ECC822D00777D8D /* ICameraViewController.swift */; };
 		0D2344871ECED636009BE227 /* Checkmark-green.png in Resources */ = {isa = PBXBuildFile; fileRef = 0D2344861ECED636009BE227 /* Checkmark-green.png */; };
 		0D2344891ECED7B4009BE227 /* photo-camera-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0D2344881ECED7B4009BE227 /* photo-camera-icon.png */; };
-		0D9503EE1ECDA6C500EA2FBC /* MultiselectImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9503ED1ECDA6C500EA2FBC /* MultiselectImagePicker.swift */; };
-		0D9503F01ECDB16300EA2FBC /* MultiselectImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9503EF1ECDB16300EA2FBC /* MultiselectImagePickerController.swift */; };
-		0D9503F61ECDF5D900EA2FBC /* ImagePickerCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9503F51ECDF5D900EA2FBC /* ImagePickerCellView.swift */; };
-		0D9503F81ECDF5ED00EA2FBC /* ImagePickerCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0D9503F71ECDF5ED00EA2FBC /* ImagePickerCellView.xib */; };
+		0D23448F1ECEDFC2009BE227 /* ImagePickerCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D23448B1ECEDFC2009BE227 /* ImagePickerCellView.swift */; };
+		0D2344901ECEDFC2009BE227 /* ImagePickerCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0D23448C1ECEDFC2009BE227 /* ImagePickerCellView.xib */; };
+		0D2344911ECEDFC2009BE227 /* MultiselectImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D23448D1ECEDFC2009BE227 /* MultiselectImagePicker.swift */; };
+		0D2344921ECEDFC2009BE227 /* MultiselectImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D23448E1ECEDFC2009BE227 /* MultiselectImagePickerController.swift */; };
+		0D2344941ECEE035009BE227 /* MultiselectPickerLocalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D2344931ECEE035009BE227 /* MultiselectPickerLocalizer.swift */; };
 		190C89BD1D40175200CF3512 /* NMessengerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190C89BC1D40175200CF3512 /* NMessengerTests.swift */; };
 		190C89C61D40181A00CF3512 /* BubbleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190C89C01D40181A00CF3512 /* BubbleTests.swift */; };
 		190C89C71D40181A00CF3512 /* CollectionViewContentNodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190C89C11D40181A00CF3512 /* CollectionViewContentNodeTests.swift */; };
@@ -391,10 +392,11 @@
 		0D08CA9C1ECC822D00777D8D /* ICameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ICameraViewController.swift; sourceTree = "<group>"; };
 		0D2344861ECED636009BE227 /* Checkmark-green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Checkmark-green.png"; sourceTree = "<group>"; };
 		0D2344881ECED7B4009BE227 /* photo-camera-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "photo-camera-icon.png"; sourceTree = "<group>"; };
-		0D9503ED1ECDA6C500EA2FBC /* MultiselectImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiselectImagePicker.swift; sourceTree = "<group>"; };
-		0D9503EF1ECDB16300EA2FBC /* MultiselectImagePickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiselectImagePickerController.swift; sourceTree = "<group>"; };
-		0D9503F51ECDF5D900EA2FBC /* ImagePickerCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerCellView.swift; sourceTree = "<group>"; };
-		0D9503F71ECDF5ED00EA2FBC /* ImagePickerCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImagePickerCellView.xib; sourceTree = "<group>"; };
+		0D23448B1ECEDFC2009BE227 /* ImagePickerCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerCellView.swift; sourceTree = "<group>"; };
+		0D23448C1ECEDFC2009BE227 /* ImagePickerCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImagePickerCellView.xib; sourceTree = "<group>"; };
+		0D23448D1ECEDFC2009BE227 /* MultiselectImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiselectImagePicker.swift; sourceTree = "<group>"; };
+		0D23448E1ECEDFC2009BE227 /* MultiselectImagePickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiselectImagePickerController.swift; sourceTree = "<group>"; };
+		0D2344931ECEE035009BE227 /* MultiselectPickerLocalizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiselectPickerLocalizer.swift; sourceTree = "<group>"; };
 		118604259124D3DC9BCBA458 /* Pods_nMessenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nMessenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		190C89BC1D40175200CF3512 /* NMessengerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NMessengerTests.swift; sourceTree = "<group>"; };
 		190C89C01D40181A00CF3512 /* BubbleTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BubbleTests.swift; sourceTree = "<group>"; };
@@ -639,6 +641,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0D23448A1ECEDFC2009BE227 /* MultiselectPicker */ = {
+			isa = PBXGroup;
+			children = (
+				0D23448B1ECEDFC2009BE227 /* ImagePickerCellView.swift */,
+				0D23448C1ECEDFC2009BE227 /* ImagePickerCellView.xib */,
+				0D23448D1ECEDFC2009BE227 /* MultiselectImagePicker.swift */,
+				0D23448E1ECEDFC2009BE227 /* MultiselectImagePickerController.swift */,
+				0D2344931ECEE035009BE227 /* MultiselectPickerLocalizer.swift */,
+			);
+			path = MultiselectPicker;
+			sourceTree = "<group>";
+		};
 		190C89BB1D40175100CF3512 /* Messenger */ = {
 			isa = PBXGroup;
 			children = (
@@ -1102,12 +1116,9 @@
 		F1FC87331D63813700F3C21C /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				0D23448A1ECEDFC2009BE227 /* MultiselectPicker */,
 				0D08CA9C1ECC822D00777D8D /* ICameraViewController.swift */,
 				F1FC87341D63813700F3C21C /* CameraViewController.swift */,
-				0D9503ED1ECDA6C500EA2FBC /* MultiselectImagePicker.swift */,
-				0D9503EF1ECDB16300EA2FBC /* MultiselectImagePickerController.swift */,
-				0D9503F51ECDF5D900EA2FBC /* ImagePickerCellView.swift */,
-				0D9503F71ECDF5ED00EA2FBC /* ImagePickerCellView.xib */,
 				F1FC87351D63813700F3C21C /* InputBarView */,
 				F1FC87381D63813700F3C21C /* NMessenger.swift */,
 			);
@@ -1340,6 +1351,7 @@
 				6162808C1D81B81400D1F510 /* loadBubble_0034_Layer-5@1x.png in Resources */,
 				616280C41D81B82800D1F510 /* loadBubble_0012_Layer-27@3x.png in Resources */,
 				616280CF1D81B82800D1F510 /* loadBubble_0023_Layer-16@3x.png in Resources */,
+				0D2344901ECEDFC2009BE227 /* ImagePickerCellView.xib in Resources */,
 				616280DB1D81B82800D1F510 /* loadBubble_0035_Layer-4@3x.png in Resources */,
 				616280DE1D81B82800D1F510 /* loadBubble_0038_Layer-1@3x.png in Resources */,
 				616280D21D81B82800D1F510 /* loadBubble_0026_Layer-13@3x.png in Resources */,
@@ -1420,7 +1432,6 @@
 				616280A51D81B81C00D1F510 /* loadBubble_0020_Layer-19@2x.png in Resources */,
 				616280BB1D81B82800D1F510 /* loadBubble_0003_Layer-36@3x.png in Resources */,
 				616280AD1D81B81C00D1F510 /* loadBubble_0028_Layer-11@2x.png in Resources */,
-				0D9503F81ECDF5ED00EA2FBC /* ImagePickerCellView.xib in Resources */,
 				616280381D8197CA00D1F510 /* NMessengerBarView.xib in Resources */,
 				616280701D81B81400D1F510 /* loadBubble_0006_Layer-33@1x.png in Resources */,
 				616280881D81B81400D1F510 /* loadBubble_0030_Layer-9@1x.png in Resources */,
@@ -1762,14 +1773,17 @@
 				616280481D81A71500D1F510 /* ImageBubbleConfiguration.swift in Sources */,
 				616280541D81A7D500D1F510 /* ImageContentNode.swift in Sources */,
 				6162805D1D81A80C00D1F510 /* MessageNode.swift in Sources */,
+				0D2344921ECEDFC2009BE227 /* MultiselectImagePickerController.swift in Sources */,
 				616280571D81A7E700D1F510 /* TypingIndicatorContent.swift in Sources */,
 				616280551D81A7DA00D1F510 /* NetworkImageContentNode.swift in Sources */,
 				616280581D81A7FF00D1F510 /* GeneralMessengerCell.swift in Sources */,
 				616280471D81A71500D1F510 /* BubbleConfigurationProtocol.swift in Sources */,
 				6162804D1D81A71A00D1F510 /* ImageBubble.swift in Sources */,
 				6162805C1D81A80C00D1F510 /* MessageGroup.swift in Sources */,
+				0D2344911ECEDFC2009BE227 /* MultiselectImagePicker.swift in Sources */,
 				616280361D8197BA00D1F510 /* InputBarView.swift in Sources */,
 				616280371D8197BE00D1F510 /* NMessengerBarView.swift in Sources */,
+				0D23448F1ECEDFC2009BE227 /* ImagePickerCellView.swift in Sources */,
 				6162805E1D81A92400D1F510 /* ModalAlertUtilities.swift in Sources */,
 				616280331D8197AD00D1F510 /* NMessenger.swift in Sources */,
 				616280321D81978000D1F510 /* NMessengerViewController.swift in Sources */,
@@ -1782,18 +1796,16 @@
 				616280351D8197B700D1F510 /* InputBarViewProtocol.swift in Sources */,
 				616280561D81A7DF00D1F510 /* TextContentNode.swift in Sources */,
 				6162804A1D81A71500D1F510 /* StandardBubbleConfiguration.swift in Sources */,
-				0D9503EE1ECDA6C500EA2FBC /* MultiselectImagePicker.swift in Sources */,
 				616280521D81A7C700D1F510 /* CustomContentCellNode.swift in Sources */,
 				616280511D81A7C700D1F510 /* CollectionViewContentNode.swift in Sources */,
 				616280601D81A92400D1F510 /* UIFont+N1Fonts.swift in Sources */,
 				6162804C1D81A71A00D1F510 /* DefaultBubble.swift in Sources */,
-				0D9503F61ECDF5D900EA2FBC /* ImagePickerCellView.swift in Sources */,
 				6162805A1D81A80500D1F510 /* MessageSentIndicator.swift in Sources */,
+				0D2344941ECEE035009BE227 /* MultiselectPickerLocalizer.swift in Sources */,
 				616280501D81A71F00D1F510 /* ContentNode.swift in Sources */,
 				6162804F1D81A71A00D1F510 /* StackedBubble.swift in Sources */,
 				616280591D81A80500D1F510 /* HeadLoadingIndicator.swift in Sources */,
 				6162804E1D81A71A00D1F510 /* SimpleBubble.swift in Sources */,
-				0D9503F01ECDB16300EA2FBC /* MultiselectImagePickerController.swift in Sources */,
 				6162805F1D81A92400D1F510 /* UIColor+N1Colors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
