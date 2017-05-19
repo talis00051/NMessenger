@@ -367,8 +367,11 @@ open class NMessengerBarView: InputBarView
      */
     @IBAction open func plusClicked(_ sender: AnyObject?)
     {
+        // TODO: check callbacks for memory leaks and retain cycles
+        
         let authStatus = self.cameraVcProto.cameraAuthStatus
         let photoLibAuthStatus = self.cameraVcProto.photoLibAuthStatus
+        
         if(authStatus != AVAuthorizationStatus.authorized)
         {
             self.cameraVcProto.isCameraPermissionGranted(
@@ -377,12 +380,7 @@ open class NMessengerBarView: InputBarView
                 
                 if(granted)
                 {
-                    DispatchQueue.main.async
-                    {
-                        self.controller.present( self.cameraVC,
-                                       animated: true,
-                                     completion: nil)
-                    }
+                    self.showPickerView(executeAfterTransition: nil)
                 }
                 else
                 {
@@ -394,15 +392,10 @@ open class NMessengerBarView: InputBarView
                             
                             if(granted)
                             {
-                                DispatchQueue.main.async
+                                self.showPickerView()
                                 {
-                                    self.controller.present( self.cameraVC,
-                                                   animated: true)
-                                    {
-                                        ModalAlertUtilities.postGoToSettingToEnableCameraModal(fromController: self.cameraVC)
-                                    }
+                                    ModalAlertUtilities.postGoToSettingToEnableCameraModal(fromController: self.cameraVC)
                                 }
-                                
                             }
                             else
                             {
@@ -412,24 +405,14 @@ open class NMessengerBarView: InputBarView
                     }
                     else
                     {
-                        DispatchQueue.main.async
-                        {
-                            self.controller.present( self.cameraVC,
-                                           animated: true,
-                                         completion: nil)
-                        }
+                        self.showPickerView(executeAfterTransition: nil)
                     }
                 }
             })
         }
         else
         {
-            DispatchQueue.main.async
-            {
-                self.controller.present( self.cameraVC,
-                               animated: true,
-                             completion: nil)
-            }
+            self.showPickerView(executeAfterTransition: nil)
         }
     }
     
@@ -441,7 +424,7 @@ open class NMessengerBarView: InputBarView
      */
     open func pickedImages(_ images: [UIImage])
     {
-        self.cameraVC.dismiss(animated: true, completion: nil)
+        self.hidePickerView()
         
         self.controller.onImagesPicked(images)
         
@@ -450,14 +433,96 @@ open class NMessengerBarView: InputBarView
 //            _ = self.controller.sendImage($0, isIncomingMessage: false)
 //        }
     }
+    
+    
+    private typealias ShowPickerViewCompletion = () -> Swift.Void
+    private func showPickerView(
+        executeAfterTransition callback: ShowPickerViewCompletion?)
+    {
+        DispatchQueue.main.async
+        {
+            self.doShowPickerView(executeAfterTransition: callback)
+        }
+    }
+    
+    private func doShowPickerView(
+        executeAfterTransition callback: ShowPickerViewCompletion?)
+    {
+        if (self.isPickerCameraVc())
+        {
+            // legacy behaviour
+            //
+            self.controller.present( self.cameraVC,
+                           animated: true,
+                         completion: callback)
+        }
+        else if let navBar = self.controller.navigationController
+        {
+            navBar.pushViewController(self.cameraVC, animated: true)
+            
+            if let callbackUnwrap = callback
+            {
+                DispatchQueue.main.async
+                {
+                    // a hack to let the transition complete
+                    callbackUnwrap()
+                }
+            }
+        }
+        else
+        {
+            // legacy behaviour
+            //
+            self.controller.present( self.cameraVC,
+                                     animated: true,
+                                     completion: callback)
+        }
+    }
+    
+    private func hidePickerView()
+    {
+        DispatchQueue.main.async
+        {
+            self.doHidePickerView()
+        }
+    }
+    
+    private func doHidePickerView()
+    {
+        if (self.isPickerCameraVc())
+        {
+            // legacy behaviour
+            //
+            self.cameraVC.dismiss(animated: true, completion: nil)
+        }
+        else if let navBar = self.controller.navigationController
+        {
+            navBar.popViewController(animated: true)
+        }
+        else
+        {
+            self.cameraVC.dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    
+    private func isPickerCameraVc() -> Bool
+    {
+        if let _ = self.cameraVC as? UIImagePickerController
+        {
+           return true
+        }
+    
+        return false
+    }
+    
     /**
      Implemetning CameraView delegate method
      Close the CameraView
      */
     open func cameraCancelSelection()
     {
-        cameraVC.dismiss(animated: true,
-                       completion: nil)
+        self.hidePickerView()
     }
 
 }
