@@ -11,13 +11,21 @@ import UIKit
 
 public struct MultiselectPickerLocalizer
 {
-    public var pickerNameForNavBar      : String?
-    public var backButtonName           : String?
+    public init()
+    {
+    }
     
-    public var checkmarkIcon            : UIImage?
-    public var cameraCellBackgroundImage: UIImage?
+    public var pickerNameForNavBar   : String?
+    public var backButtonName        : String?
     
-    public var cellViewNibName          : String?
-    public var cellViewBundle           : Bundle?
+    public var checkmarkIcon         : UIImage?
+    public var cameraCellText        : String?
+    public var cameraCellImage       : UIImage?
+
+    public var imageCellViewNibName  : String?
+    public var imageCellViewBundle   : Bundle?
+    
+    public var cameraCellViewNibName : String?
+    public var cameraCellViewBundle  : Bundle?
 }
 
