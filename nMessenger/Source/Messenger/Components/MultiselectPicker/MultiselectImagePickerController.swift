@@ -16,13 +16,16 @@ import AVFoundation
 internal typealias PHImageFetchCallback = (UIImage?, [AnyHashable : Any]?) -> Swift.Void
 internal typealias PHImageLoaderBlock   = (@escaping PHImageFetchCallback) -> Swift.Void
 
+// TODO: fix signature appropriately
+//
+internal typealias NMSaveImageCallback = (Bool, Error?) -> Swift.Void
 
 internal protocol MultiselectImagePickerControllerDelegate: class
 {
     func pickerDidLoadImagesMetadata(sender: Any)
 }
 
-internal class MultiselectImagePickerController
+internal class MultiselectImagePickerController: NSObject
 {
     private let _imageManager = PHCachingImageManager()
     private var _allPhotosDataset  : PHFetchResult<PHAsset>
@@ -30,13 +33,62 @@ internal class MultiselectImagePickerController
     
     public weak var delegate: MultiselectImagePickerControllerDelegate?
     
-    public init()
+    public override init()
+    {
+        self._allPhotosDataset = MultiselectImagePickerController.updatePhotosDataset()
+        
+        super.init()
+    }
+    
+    private func incrementSelectionIndicesOnNewPhotoInsertion()
+    {
+        // TODO: fix for the case when time settings of the device are changed
+        //
+        
+        let updatedIndices: [Int] = self._multiselectIndices.map { $0 + 1 }
+        let indexOfNewPhoto: Int = 1
+        
+        let newIndices = updatedIndices + [indexOfNewPhoto]
+        
+        self._multiselectIndices = Set<Int>(newIndices)
+    }
+    
+    private func updatePhotosDataset() -> PHFetchResult<PHAsset>
+    {
+        return MultiselectImagePickerController.updatePhotosDataset()
+    }
+    
+    private static func updatePhotosDataset() -> PHFetchResult<PHAsset>
     {
         let allPhotosLatestOnTop = PHFetchOptions()
         allPhotosLatestOnTop.sortDescriptors =
             [NSSortDescriptor(key: "creationDate", ascending: false)]
         
-        self._allPhotosDataset = PHAsset.fetchAssets(with: allPhotosLatestOnTop)
+        let result: PHFetchResult<PHAsset>?
+        result = PHAsset.fetchAssets(with: allPhotosLatestOnTop)
+        
+        return result!
+    }
+    
+    
+    private static func getCameraRollAlbum() -> PHAssetCollection?
+    {
+        // http://stackoverflow.com/questions/25730830/how-to-get-only-images-in-the-camera-roll-using-photos-framework
+        
+        // https://gist.github.com/Koze/f8b3adf542c5dae6e9cf
+        //
+        let query = PHAssetCollection.fetchAssetCollections(with: .smartAlbum,
+                                                         subtype: .smartAlbumUserLibrary,
+                                                         options: nil)
+        let result: PHAssetCollection? = query.firstObject
+        print("[nmessenger] [debug] camera roll name" + (result?.localizedTitle ?? ""))
+        
+        return result
+    }
+    
+    private func getCameraRollAlbum() -> PHAssetCollection?
+    {
+        return MultiselectImagePickerController.getCameraRollAlbum()
     }
     
     public func loadImagesAsync()
@@ -94,5 +146,72 @@ internal class MultiselectImagePickerController
         }
         
         return result
+    }
+    
+    public func imageLoadersForSelectedImages() -> [PHImageLoaderBlock]
+    {
+        let result = self._multiselectIndices.map
+        {
+            currentIndex -> PHImageLoaderBlock in
+            
+            let blockResult = self.imageLoaderAt(index: currentIndex)
+            return blockResult
+        }
+        
+        return result
+    }
+    
+    public func saveImageFromCameraAsync(_ image: UIImage
+                                /*, callback: @escaping NMSaveImageCallback*/)
+    {
+        UIImageWriteToSavedPhotosAlbum(
+            image,
+            self,
+            #selector(MultiselectImagePickerController.image(_:didFinishSavingWithError:contextInfo:)),
+            nil)
+    }
+    
+    
+    @objc(image:didFinishSavingWithError:contextInfo:)
+    private func image(_  image: UIImage,
+ didFinishSavingWithError error: NSError?,
+                    contextInfo: UnsafeRawPointer)
+    {
+        self.incrementSelectionIndicesOnNewPhotoInsertion()
+        self._allPhotosDataset = self.updatePhotosDataset()
+        self.delegate?.pickerDidLoadImagesMetadata(sender: self)
+    }
+
+    private func saveImageFromCameraAsync_photos_framework(
+        _ image: UIImage,
+        callback: @escaping NMSaveImageCallback)
+    {
+        let transactionBlock: () -> Void =
+        {
+            let cameraRollAlbum  = self.getCameraRollAlbum()!
+            let saveImageRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
+            
+            let notSavedYetImageAsset = saveImageRequest.placeholderForCreatedAsset
+            let editAlbumRequest = PHAssetCollectionChangeRequest(for: cameraRollAlbum)
+            editAlbumRequest?.addAssets([notSavedYetImageAsset] as NSArray)
+        }
+        
+        let saveCallback: (Bool, Error?) -> Swift.Void =
+        {
+            [weak weakSelf = self]
+            (status, maybeError) in
+            
+            if let strongSelf = weakSelf
+            {
+                strongSelf.incrementSelectionIndicesOnNewPhotoInsertion()
+                strongSelf._allPhotosDataset = strongSelf.updatePhotosDataset()
+                strongSelf.delegate?.pickerDidLoadImagesMetadata(sender: strongSelf)
+            }
+            
+            callback(status, maybeError)
+        }
+        
+        PHPhotoLibrary.shared().performChanges( transactionBlock,
+                                                completionHandler: saveCallback    )
     }
 }
