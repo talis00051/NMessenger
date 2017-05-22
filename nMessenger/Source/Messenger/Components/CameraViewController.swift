@@ -521,45 +521,8 @@ open class CameraViewController: UIImagePickerController
     open func imagePickerController(_ picker: UIImagePickerController,
           didFinishPickingMediaWithInfo info: [String : Any])
     {
-        var myImage:UIImage? = nil
-        
-        if let tmpImage = info[UIImagePickerControllerEditedImage] as? UIImage
-        {
-            myImage = tmpImage
-        }
-        else
-        {
-            print("[NMEssenger] CameraViewController : Something went wrong - UIImagePickerControllerEditedImage")
-        }
-        
-        if myImage == nil
-        {
-            if let tmpImage = info[UIImagePickerControllerOriginalImage] as? UIImage
-            {
-                myImage = tmpImage
-            }
-            else
-            {
-                print("[NMEssenger] CameraViewController : Something went wrong - UIImagePickerControllerOriginalImage")
-            }
-            
-            //myImage = info[UIImagePickerControllerOriginalImage] as? UIImage
-            /* Correctly flip the mirrored image of front-facing camera */
-            
-            let isFrontSideCameraUsed =
-                (self.cameraDevice == UIImagePickerControllerCameraDevice.front)
-            if (isFrontSideCameraUsed)
-            {
-                if let im = myImage,
-                   let cgImage = im.cgImage
-                {
-                    myImage =
-                        UIImage(cgImage: cgImage,
-                                  scale: im.scale,
-                            orientation: .leftMirrored)
-                }
-            }
-        }
+        let myImage:UIImage? =
+            PickedImageHelper.getImageFromPicker(self, completionOptions: info)
         
         if let myImageExisting = myImage
         {
