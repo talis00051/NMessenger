@@ -26,6 +26,7 @@ open class NMessengerBarView: InputBarView
     @IBOutlet open weak var inputBarView: UIView!
     
     @IBOutlet open weak var photoPickerButton: UIButton!
+    @IBOutlet open weak var badgeLabel: UILabel?
     
     //@IBOutlet for send button
     @IBOutlet open weak var sendButton: UIButton!

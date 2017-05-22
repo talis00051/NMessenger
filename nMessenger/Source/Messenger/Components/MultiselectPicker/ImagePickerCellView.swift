@@ -10,6 +10,6 @@ import UIKit
 
 public class ImagePickerCellView: UIView
 {
-    @IBOutlet public var imageView: UIImageView?
+    @IBOutlet public var imageView : UIImageView?
     @IBOutlet public var statusView: UIImageView?
 }
