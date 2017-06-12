@@ -51,6 +51,8 @@ open class NMessengerBarView: InputBarView
     
     //CGFloat to the fine the number of rows a user can type
     open var numberOfRows:CGFloat = 3
+    open var maxSymolsCountInMessage: Int? = nil
+    
     //String as placeholder text in input view
     open var inputTextViewPlaceholder: String =
         Bundle.main.localizedString(forKey: "Chat.InputField.PlaceholderText",
@@ -223,11 +225,25 @@ open class NMessengerBarView: InputBarView
         {
             let castedText: NSString = textView.text as NSString
             let newText = castedText.replacingCharacters(in: range, with: text)
+            let lengthOfNewText = newText.characters.count
+            
             
             let numberOfLines = self.getNumberOfLines(forText: newText,
                                                    inTextView: textView)
+            let isLineLimitOk = (numberOfLines <= self.numberOfRows)
             
-            return numberOfLines <= self.numberOfRows
+            if let maxSymolsCountInMessage = self.maxSymolsCountInMessage
+            {
+                let isSymbolLimitOk = (lengthOfNewText <= maxSymolsCountInMessage)
+                let result = isSymbolLimitOk && isLineLimitOk
+                
+                return result
+            }
+            else
+            {
+                // legacy behaviour
+                return isLineLimitOk
+            }
         }
         return false
     }
@@ -381,6 +397,7 @@ open class NMessengerBarView: InputBarView
                 
                 if(granted)
                 {
+                    NSLog("[NMessenger] showPickerView - camera requested and granted")
                     self.showPickerView(executeAfterTransition: nil)
                 }
                 else
@@ -393,6 +410,7 @@ open class NMessengerBarView: InputBarView
                             
                             if(granted)
                             {
+                                NSLog("[NMessenger] showPickerView - camera request [-]; photo request[x]")
                                 self.showPickerView()
                                 {
                                     ModalAlertUtilities.postGoToSettingToEnableCameraModal(fromController: self.cameraVC)
@@ -400,12 +418,14 @@ open class NMessengerBarView: InputBarView
                             }
                             else
                             {
+                                NSLog("[NMessenger] showPickerView - camera request [-]; photo request [-]")
                                 ModalAlertUtilities.postGoToSettingToEnableCameraAndLibraryModal(fromController: self.controller)
                             }
                         }
                     }
                     else
                     {
+                        NSLog("[NMessenger] showPickerView - camera request[-]; photo [x]")
                         self.showPickerView(executeAfterTransition: nil)
                     }
                 }
@@ -413,6 +433,7 @@ open class NMessengerBarView: InputBarView
         }
         else
         {
+            NSLog("[NMessenger] showPickerView - camera already authorized")
             self.showPickerView(executeAfterTransition: nil)
         }
     }
