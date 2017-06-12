@@ -39,7 +39,6 @@ open class MultiselectImagePicker: UIViewController
     {
         super.viewDidLoad()
         
-        self.setupNavbarTitles()
         self.addSaveButtonToNavbar()
         self.addGridViewFullScreen()
         self._controller.delegate = self
@@ -47,10 +46,12 @@ open class MultiselectImagePicker: UIViewController
         self.setupColours()
     }
     
-    open override func viewDidAppear(_ animated: Bool)
+    open override func viewWillAppear(_ animated: Bool)
     {
+        super.viewWillAppear(animated)
+        
+        self.setupNavbarTitles()
         self.loadImagesAsync()
-        super.viewDidAppear(animated)
     }
     
     private func setupNavbarTitles()
@@ -187,7 +188,7 @@ forCellWithReuseIdentifier: MultiselectImagePicker.cameraCellId)
     // MARK: - logic
     private func loadImagesAsync()
     {
-        
+        self._controller.loadImagesAsync()
     }
 }
 
@@ -282,11 +283,7 @@ extension MultiselectImagePicker: UICollectionViewDataSource
         {
             self.configureImagePreviewCell(cell, atIndex: itemIndex)
         }
-        
-        // DEBUG
-        //
-        cell.backgroundColor = UIColor.cyan
-        
+                
         return cell
     }
     

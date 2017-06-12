@@ -27,18 +27,17 @@ internal protocol MultiselectImagePickerControllerDelegate: class
 
 internal class MultiselectImagePickerController: NSObject
 {
-    private let _imageManager = PHCachingImageManager()
-    private var _allPhotosDataset  : PHFetchResult<PHAsset>
-    private var _multiselectIndices: Set<Int> = []
+    // if this one is not `lazy`, 
+    // you'll see an unwanted system dialog 
+    // about "photo access permission"
+    //
+    private lazy var _imageManager      : PHCachingImageManager = PHCachingImageManager()
+    
+    
+    private      var _allPhotosDataset  : PHFetchResult<PHAsset>?
+    private      var _multiselectIndices: Set<Int> = []
     
     public weak var delegate: MultiselectImagePickerControllerDelegate?
-    
-    public override init()
-    {
-        self._allPhotosDataset = MultiselectImagePickerController.updatePhotosDataset()
-        
-        super.init()
-    }
     
     private func incrementSelectionIndicesOnNewPhotoInsertion()
     {
@@ -61,6 +60,12 @@ internal class MultiselectImagePickerController: NSObject
     private static func updatePhotosDataset() -> PHFetchResult<PHAsset>
     {
         let allPhotosLatestOnTop = PHFetchOptions()
+        
+        if #available(iOS 9.0, *)
+        {
+            allPhotosLatestOnTop.includeAssetSourceTypes = PHAssetSourceType.typeUserLibrary
+        }
+        
         allPhotosLatestOnTop.sortDescriptors =
             [NSSortDescriptor(key: "creationDate", ascending: false)]
         
@@ -93,7 +98,7 @@ internal class MultiselectImagePickerController: NSObject
     
     public func loadImagesAsync()
     {
-        // IDLE: all work done in a constructor
+        self._allPhotosDataset = MultiselectImagePickerController.updatePhotosDataset()
         
         self.delegate?.pickerDidLoadImagesMetadata(sender: self)
     }
@@ -118,7 +123,7 @@ internal class MultiselectImagePickerController: NSObject
     
     public func numberOfImages() -> Int
     {
-        let photosCount = self._allPhotosDataset.count
+        let photosCount = self._allPhotosDataset?.count ?? 0
         let photosAndCameraCellCount = photosCount + 1
         
         let result = photosAndCameraCellCount
@@ -128,10 +133,11 @@ internal class MultiselectImagePickerController: NSObject
     public func imageLoaderAt(index: Int) -> PHImageLoaderBlock
     {
         precondition(index > 0)
+        precondition(nil != self._allPhotosDataset)
         
         let indexWithoutCameraButton = index - 1
         
-        let asset: PHAsset = self._allPhotosDataset.object(at: indexWithoutCameraButton)
+        let asset: PHAsset = self._allPhotosDataset!.object(at: indexWithoutCameraButton)
         let imageSize = CGSize(width: 100, height: 100)
         
         let result: PHImageLoaderBlock =
