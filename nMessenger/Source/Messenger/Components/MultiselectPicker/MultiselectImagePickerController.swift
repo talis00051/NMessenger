@@ -82,9 +82,12 @@ internal class MultiselectImagePickerController: NSObject
         
         // https://gist.github.com/Koze/f8b3adf542c5dae6e9cf
         //
-        let query = PHAssetCollection.fetchAssetCollections(with: .smartAlbum,
-                                                         subtype: .smartAlbumUserLibrary,
-                                                         options: nil)
+        let query =
+            PHAssetCollection.fetchAssetCollections(
+                with: .smartAlbum,
+                subtype: .smartAlbumUserLibrary,
+                options: nil)
+        
         let result: PHAssetCollection? = query.firstObject
         print("[nmessenger] [debug] camera roll name" + (result?.localizedTitle ?? ""))
         
@@ -130,25 +133,73 @@ internal class MultiselectImagePickerController: NSObject
         return result
     }
     
-    public func imageLoaderAt(index: Int) -> PHImageLoaderBlock
+    public func imageNameAt(index: Int) -> String
+    {
+        precondition(index > 0)
+        precondition(nil != self._allPhotosDataset)
+        
+        let asset: PHAsset = self.imageAssetAt(index: index)
+        
+        if #available(iOS 9.0, *) {
+            
+            let resources = PHAssetResource.assetResources(for: asset)
+           
+            if let firstResource = resources.first
+            {
+                let result = firstResource.originalFilename
+                return result
+            }
+        }
+        
+        let result = NSUUID().uuidString
+        return result
+    }
+    
+    public func imageAssetAt(index: Int) -> PHAsset
     {
         precondition(index > 0)
         precondition(nil != self._allPhotosDataset)
         
         let indexWithoutCameraButton = index - 1
+        let asset: PHAsset =
+            self._allPhotosDataset!.object(at: indexWithoutCameraButton)
         
-        let asset: PHAsset = self._allPhotosDataset!.object(at: indexWithoutCameraButton)
+        return asset
+    }
+    
+    public func imageLoaderAt(index: Int) -> PHImageLoaderBlock
+    {
+        precondition(index > 0)
+        precondition(nil != self._allPhotosDataset)
+        
+        let asset: PHAsset =
+            self.imageAssetAt(index: index)
+        
         let imageSize = CGSize(width: 100, height: 100)
         
         let result: PHImageLoaderBlock =
         {
             callback in
             
-            self._imageManager.requestImage(for: asset     ,
-                                     targetSize: imageSize ,
-                                    contentMode: .aspectFit,
-                                        options: nil       ,
-                                  resultHandler: callback  )
+            self._imageManager.requestImage(
+                for: asset,
+                targetSize: imageSize,
+                contentMode: .aspectFit,
+                options: nil,
+                resultHandler: callback)
+        }
+        
+        return result
+    }
+    
+    public func assetsForSelectedImages() -> [PHAsset]
+    {
+        let result = self._multiselectIndices.map
+        {
+            currentIndex -> PHAsset in
+            
+            let blockResult = self.imageAssetAt(index: currentIndex)
+            return blockResult
         }
         
         return result
@@ -167,8 +218,9 @@ internal class MultiselectImagePickerController: NSObject
         return result
     }
     
-    public func saveImageFromCameraAsync(_ image: UIImage
-                                /*, callback: @escaping NMSaveImageCallback*/)
+    public func saveImageFromCameraAsync(
+        _ image: UIImage
+        /*, callback: @escaping NMSaveImageCallback*/)
     {
         UIImageWriteToSavedPhotosAlbum(
             image,
@@ -195,11 +247,20 @@ internal class MultiselectImagePickerController: NSObject
         let transactionBlock: () -> Void =
         {
             let cameraRollAlbum  = self.getCameraRollAlbum()!
-            let saveImageRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
+            let saveImageRequest =
+                PHAssetChangeRequest.creationRequestForAsset(
+                    from: image)
             
-            let notSavedYetImageAsset = saveImageRequest.placeholderForCreatedAsset
-            let editAlbumRequest = PHAssetCollectionChangeRequest(for: cameraRollAlbum)
-            editAlbumRequest?.addAssets([notSavedYetImageAsset] as NSArray)
+            if let notSavedYetImageAsset = saveImageRequest.placeholderForCreatedAsset
+            {
+                let editAlbumRequest =
+                    PHAssetCollectionChangeRequest(
+                        for: cameraRollAlbum)
+                
+                let castedNotSavedYetImageAsset: NSArray =
+                    [notSavedYetImageAsset] as NSArray
+                editAlbumRequest?.addAssets(castedNotSavedYetImageAsset)
+            }
         }
         
         let saveCallback: (Bool, Error?) -> Swift.Void =
@@ -217,7 +278,8 @@ internal class MultiselectImagePickerController: NSObject
             callback(status, maybeError)
         }
         
-        PHPhotoLibrary.shared().performChanges( transactionBlock,
-                                                completionHandler: saveCallback    )
+        PHPhotoLibrary.shared().performChanges(
+            transactionBlock,
+            completionHandler: saveCallback)
     }
 }
