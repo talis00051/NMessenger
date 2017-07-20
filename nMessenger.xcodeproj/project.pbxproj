@@ -15,6 +15,7 @@
 		0D2344911ECEDFC2009BE227 /* MultiselectImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D23448D1ECEDFC2009BE227 /* MultiselectImagePicker.swift */; };
 		0D2344921ECEDFC2009BE227 /* MultiselectImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D23448E1ECEDFC2009BE227 /* MultiselectImagePickerController.swift */; };
 		0D2344941ECEE035009BE227 /* MultiselectPickerLocalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D2344931ECEE035009BE227 /* MultiselectPickerLocalizer.swift */; };
+		0D2D75FC1F1E71C40090B587 /* CollectionViewWithTextContentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D2D75FB1F1E71C40090B587 /* CollectionViewWithTextContentNode.swift */; };
 		0D9046591ED2CFA900C18A2D /* PickedImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9046581ED2CFA900C18A2D /* PickedImageHelper.swift */; };
 		0D90465B1ED2DC8400C18A2D /* CameraStreamCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D90465A1ED2DC8400C18A2D /* CameraStreamCellView.swift */; };
 		0D90465D1ED2DCA400C18A2D /* CameraStreamCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0D90465C1ED2DCA400C18A2D /* CameraStreamCellView.xib */; };
@@ -201,6 +202,7 @@
 		616280E81D81B84000D1F510 /* shutterBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = F1E73C4F1D760B8300E61960 /* shutterBtn.png */; };
 		616280E91D81B84000D1F510 /* shutterBtn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F1E73C501D760B8300E61960 /* shutterBtn@2x.png */; };
 		616280EA1D81B84000D1F510 /* shutterBtn@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F1E73C511D760B8300E61960 /* shutterBtn@3x.png */; };
+		7EDF49DF1F1CEE3D002CB14E /* CameraViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDF49DE1F1CEE3D002CB14E /* CameraViewDelegate.swift */; };
 		86F11903BAF6EDD175EB4990 /* Pods_nMessengerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF61F41CAE7391D9E0ED0C81 /* Pods_nMessengerUITests.framework */; };
 		E3186CCB59F60DAAE6093DE0 /* Pods_nMessengerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ECF6E0F01811A56BE9AC7F3 /* Pods_nMessengerTests.framework */; };
 		F13F39E11D650D490021A858 /* InputBarViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13F39E01D650D490021A858 /* InputBarViewProtocol.swift */; };
@@ -403,6 +405,7 @@
 		0D23448D1ECEDFC2009BE227 /* MultiselectImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiselectImagePicker.swift; sourceTree = "<group>"; };
 		0D23448E1ECEDFC2009BE227 /* MultiselectImagePickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiselectImagePickerController.swift; sourceTree = "<group>"; };
 		0D2344931ECEE035009BE227 /* MultiselectPickerLocalizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiselectPickerLocalizer.swift; sourceTree = "<group>"; };
+		0D2D75FB1F1E71C40090B587 /* CollectionViewWithTextContentNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewWithTextContentNode.swift; sourceTree = "<group>"; };
 		0D9046581ED2CFA900C18A2D /* PickedImageHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickedImageHelper.swift; sourceTree = "<group>"; };
 		0D90465A1ED2DC8400C18A2D /* CameraStreamCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraStreamCellView.swift; sourceTree = "<group>"; };
 		0D90465C1ED2DCA400C18A2D /* CameraStreamCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CameraStreamCellView.xib; sourceTree = "<group>"; };
@@ -429,6 +432,7 @@
 		616280451D81A5E700D1F510 /* AsyncDisplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AsyncDisplayKit.framework; path = Carthage/Build/iOS/AsyncDisplayKit.framework; sourceTree = "<group>"; };
 		63BE651F160382BA665BB69A /* Pods-nMessenger-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nMessenger-iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-nMessenger-iOS/Pods-nMessenger-iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		6ECF6E0F01811A56BE9AC7F3 /* Pods_nMessengerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nMessengerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7EDF49DE1F1CEE3D002CB14E /* CameraViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewDelegate.swift; sourceTree = "<group>"; };
 		8A062A8E734DA8EA0F8D8B52 /* Pods-nMessengerUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nMessengerUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-nMessengerUITests/Pods-nMessengerUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		8CF2E3A82AF41784B4946EB9 /* Pods-nMessengerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nMessengerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-nMessengerTests/Pods-nMessengerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		96F7715E257CBD466B05C8B0 /* Pods-nMessenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nMessenger.release.xcconfig"; path = "Pods/Target Support Files/Pods-nMessenger/Pods-nMessenger.release.xcconfig"; sourceTree = "<group>"; };
@@ -1046,6 +1050,7 @@
 		F1FC871B1D63813700F3C21C /* CollectionViewContent */ = {
 			isa = PBXGroup;
 			children = (
+				0D2D75FB1F1E71C40090B587 /* CollectionViewWithTextContentNode.swift */,
 				F1FC871C1D63813700F3C21C /* CollectionViewContentNode.swift */,
 				F1FC871D1D63813700F3C21C /* CustomContentCellNode.swift */,
 			);
@@ -1136,6 +1141,7 @@
 				0D23448A1ECEDFC2009BE227 /* MultiselectPicker */,
 				0D08CA9C1ECC822D00777D8D /* ICameraViewController.swift */,
 				F1FC87341D63813700F3C21C /* CameraViewController.swift */,
+				7EDF49DE1F1CEE3D002CB14E /* CameraViewDelegate.swift */,
 				0D9046581ED2CFA900C18A2D /* PickedImageHelper.swift */,
 				F1FC87351D63813700F3C21C /* InputBarView */,
 				F1FC87381D63813700F3C21C /* NMessenger.swift */,
@@ -1803,6 +1809,7 @@
 				6162804D1D81A71A00D1F510 /* ImageBubble.swift in Sources */,
 				6162805C1D81A80C00D1F510 /* MessageGroup.swift in Sources */,
 				0D2344911ECEDFC2009BE227 /* MultiselectImagePicker.swift in Sources */,
+				0D2D75FC1F1E71C40090B587 /* CollectionViewWithTextContentNode.swift in Sources */,
 				616280361D8197BA00D1F510 /* InputBarView.swift in Sources */,
 				616280371D8197BE00D1F510 /* NMessengerBarView.swift in Sources */,
 				0D23448F1ECEDFC2009BE227 /* ImagePickerCellView.swift in Sources */,
@@ -1810,6 +1817,7 @@
 				616280331D8197AD00D1F510 /* NMessenger.swift in Sources */,
 				616280321D81978000D1F510 /* NMessengerViewController.swift in Sources */,
 				6162804B1D81A71A00D1F510 /* Bubble.swift in Sources */,
+				7EDF49DF1F1CEE3D002CB14E /* CameraViewDelegate.swift in Sources */,
 				6162805B1D81A80C00D1F510 /* MessageCellProtocol.swift in Sources */,
 				0D9046591ED2CFA900C18A2D /* PickedImageHelper.swift in Sources */,
 				616280491D81A71500D1F510 /* SimpleBubbleConfiguration.swift in Sources */,
