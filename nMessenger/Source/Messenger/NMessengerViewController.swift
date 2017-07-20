@@ -109,6 +109,12 @@ open class NMessengerViewController: UIViewController
         self.addObservers()
     }
     
+    open func onAssetsPicked(_ assets: [PHAsset])
+    {
+        print("[WARN] NMessengerViewController.onAssetsPicked() is invoked but not overloaded")
+        print("Assets : \(assets.debugDescription)")
+    }
+    
     open func onImagesPicked(_ images: [UIImage])
     {
         // legacy implementation
@@ -574,12 +580,22 @@ open class NMessengerViewController: UIViewController
      - parameter isIncomingMessage: if message is incoming or outgoing
      - returns: the newly created message
      */
-    open func createCollectionNodeMessage(_ nodes: [ASDisplayNode], numberOfRows:CGFloat, isIncomingMessage:Bool) -> GeneralMessengerCell {
-        let collectionViewContent = CollectionViewContentNode(withCustomNodes: nodes, andNumberOfRows: numberOfRows, bubbleConfiguration: self.sharedBubbleConfiguration)
+    open func createCollectionNodeMessage(
+        _ nodes: [ASDisplayNode],
+        numberOfRows:CGFloat,
+        isIncomingMessage:Bool)
+    -> GeneralMessengerCell
+    {
+        let collectionViewContent =
+            CollectionViewContentNode(
+                withCustomNodes: nodes,
+                andNumberOfRows: numberOfRows,
+                bubbleConfiguration: self.sharedBubbleConfiguration)
+        
         let newMessage = MessageNode(content: collectionViewContent)
-        newMessage.cellPadding = messagePadding
-        newMessage.currentViewController = self
-        newMessage.isIncomingMessage = isIncomingMessage
+            newMessage.cellPadding           = self.messagePadding
+            newMessage.currentViewController = self
+            newMessage.isIncomingMessage     = isIncomingMessage
         
         return newMessage
     }
@@ -591,8 +607,17 @@ open class NMessengerViewController: UIViewController
      - parameter isIncomingMessage: if message is incoming or outgoing
      - returns: the newly created message
      */
-    fileprivate func postCollectionView(_ nodes: [ASDisplayNode], numberOfRows:CGFloat, isIncomingMessage:Bool) -> GeneralMessengerCell {
-        let newMessage = self.createCollectionNodeMessage(nodes, numberOfRows: numberOfRows, isIncomingMessage: isIncomingMessage)
+    fileprivate func postCollectionView(
+        _ nodes: [ASDisplayNode],
+        numberOfRows:CGFloat,
+        isIncomingMessage:Bool) -> GeneralMessengerCell
+    {
+        let newMessage =
+            self.createCollectionNodeMessage(
+                nodes,
+                numberOfRows: numberOfRows,
+                isIncomingMessage: isIncomingMessage)
+        
         self.addMessageToMessenger(newMessage)
         return newMessage
     }
