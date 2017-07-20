@@ -99,7 +99,10 @@ open class TextContentNode: ContentNode,ASTextNodeDelegate {
      - parameter currentViewController: Must be an UIViewController. Set current view controller holding the cell.
      Calls helper method to setup cell
      */
-    public init(textMessageString: String, currentViewController: UIViewController, bubbleConfiguration: BubbleConfigurationProtocol? = nil)
+    public init(
+        textMessageString: String,
+        currentViewController: UIViewController,
+        bubbleConfiguration: BubbleConfigurationProtocol? = nil)
     {
         super.init(bubbleConfiguration: bubbleConfiguration)
         self.currentViewController = currentViewController
@@ -115,32 +118,85 @@ open class TextContentNode: ContentNode,ASTextNodeDelegate {
     fileprivate func setupTextNode(_ textMessageString: String)
     {
         self.backgroundBubble = self.bubbleConfiguration.getBubble()
-        textMessageNode.delegate = self
-        textMessageNode.isUserInteractionEnabled = true
-        textMessageNode.linkAttributeNames = ["LinkAttribute","PhoneNumberAttribute"]
-        let fontAndSizeAndTextColor = [ NSFontAttributeName: self.isIncomingMessage ? incomingTextFont : outgoingTextFont, NSForegroundColorAttributeName: self.isIncomingMessage ? incomingTextColor : outgoingTextColor]
-        let outputString = NSMutableAttributedString(string: textMessageString, attributes: fontAndSizeAndTextColor )
-        let types: NSTextCheckingResult.CheckingType = [.link, .phoneNumber]
+        self.textMessageNode.delegate = self
+        self.textMessageNode.isUserInteractionEnabled = true
+        self.textMessageNode.linkAttributeNames =
+        [
+            "LinkAttribute",
+            "PhoneNumberAttribute"
+        ]
+        
+        let fontAndSizeAndTextColor =
+        [
+            NSFontAttributeName:
+                self.isIncomingMessage
+                    ? self.incomingTextFont
+                    : self.outgoingTextFont,
+            
+            NSForegroundColorAttributeName:
+                self.isIncomingMessage
+                    ? incomingTextColor
+                    : outgoingTextColor
+        ]
+        
+        let outputString =
+            NSMutableAttributedString(
+                string: textMessageString,
+                attributes: fontAndSizeAndTextColor)
+        
+        let types: NSTextCheckingResult.CheckingType =
+        [
+            .link,
+            .phoneNumber
+        ]
+        
         let detector = try! NSDataDetector(types: types.rawValue)
-        let matches = detector.matches(in: textMessageString, options: [], range: NSMakeRange(0, textMessageString.characters.count))
+        let matches =
+            detector.matches(
+                in: textMessageString,
+                options: [],
+                range: NSMakeRange(0, textMessageString.characters.count))
+        
         for match in matches {
             if let url = match.url
             {
-                outputString.addAttribute("LinkAttribute", value: url, range: match.range)
-                outputString.addAttribute(NSUnderlineStyleAttributeName, value: NSUnderlineStyle.styleSingle.rawValue, range: match.range)
-                outputString.addAttribute(NSForegroundColorAttributeName, value: UIColor.blue, range: match.range)
+                outputString.addAttribute(
+                    "LinkAttribute",
+                    value: url,
+                    range: match.range)
+                
+                outputString.addAttribute(
+                    NSUnderlineStyleAttributeName,
+                    value: NSUnderlineStyle.styleSingle.rawValue,
+                    range: match.range)
+                
+                outputString.addAttribute(
+                    NSForegroundColorAttributeName,
+                    value: UIColor.blue,
+                    range: match.range)
             }
             if let phoneNumber = match.phoneNumber
             {
-                outputString.addAttribute("PhoneNumberAttribute", value: phoneNumber, range: match.range)
-                outputString.addAttribute(NSUnderlineStyleAttributeName, value: NSUnderlineStyle.styleSingle.rawValue, range: match.range)
-                outputString.addAttribute(NSForegroundColorAttributeName, value: UIColor.blue, range: match.range)
+                outputString.addAttribute(
+                    "PhoneNumberAttribute",
+                    value: phoneNumber,
+                    range: match.range)
+                
+                outputString.addAttribute(
+                    NSUnderlineStyleAttributeName,
+                    value: NSUnderlineStyle.styleSingle.rawValue,
+                    range: match.range)
+                
+                outputString.addAttribute(
+                    NSForegroundColorAttributeName,
+                    value: UIColor.blue,
+                    range: match.range)
             }
         }
         self.textMessageNode.attributedText = outputString
         self.textMessageNode.accessibilityIdentifier = "labelMessage"
         self.textMessageNode.isAccessibilityElement = true
-        self.addSubnode(textMessageNode)
+        self.addSubnode(self.textMessageNode)
     }
     
     //MARK: Helper Methods
@@ -158,17 +214,25 @@ open class TextContentNode: ContentNode,ASTextNodeDelegate {
     /**
      Overriding layoutSpecThatFits to specifiy relatiohsips between elements in the cell
      */
-    override open func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        let width = constrainedSize.max.width - self.insets.left - self.insets.right
+    override open func layoutSpecThatFits(
+        _ constrainedSize: ASSizeRange)
+    -> ASLayoutSpec
+    {
+        let insetsTogether = (self.insets.left + self.insets.right)
+        let width = constrainedSize.max.width - insetsTogether
         
-        textMessageNode.style.maxWidth = ASDimension(unit: .points, value: width)
-        textMessageNode.style.maxHeight = ASDimension(unit: .fraction, value: 1)
+        self.textMessageNode.style.maxWidth  = ASDimension(unit: .points  , value: width)
+        self.textMessageNode.style.maxHeight = ASDimension(unit: .fraction, value: 1)
         
         let textMessageSize = ASAbsoluteLayoutSpec()
-        textMessageSize.sizing = .sizeToFit
-        textMessageSize.children = [self.textMessageNode]
+            textMessageSize.sizing   = .sizeToFit
+            textMessageSize.children = [self.textMessageNode]
         
-        return  ASInsetLayoutSpec(insets: insets, child: textMessageSize)
+        let result =
+            ASInsetLayoutSpec(
+                insets: self.insets,
+                child: textMessageSize)
+        return result
         
     }
     
