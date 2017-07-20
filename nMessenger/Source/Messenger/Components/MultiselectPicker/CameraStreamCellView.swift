@@ -55,10 +55,11 @@ public class CameraStreamCellView: UIView
         self.configureCaptureDevice(captureDevice)
         
         
-        let captureInput = try! AVCaptureDeviceInput(device: captureDevice)
-        captureSession.addInput(captureInput)
-        
-        captureSession.startRunning()
+        if let captureInput = try? AVCaptureDeviceInput(device: captureDevice)
+        {
+            captureSession.addInput(captureInput)
+            captureSession.startRunning()
+        }
     }
     
     private func configureCaptureDevice(_ captureDevice: AVCaptureDevice)
