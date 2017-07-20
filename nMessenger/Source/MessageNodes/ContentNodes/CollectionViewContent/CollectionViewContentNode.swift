@@ -17,11 +17,16 @@ import AsyncDisplayKit
  Define content that is a collection view. The collection view can have 1 row or multiple row.
  Cells can be either views or nodes.
  */
-open class CollectionViewContentNode: ContentNode,ASCollectionDelegate,ASCollectionDataSource, UICollectionViewDelegateFlowLayout {
-    
+open class CollectionViewContentNode: ContentNode
+                                    , ASCollectionDelegate
+                                    , ASCollectionDataSource
+                                    , UICollectionViewDelegateFlowLayout
+{
     /**Should the bubble be masked or not*/
-    open var maskedBubble = true {
-        didSet {
+    open var maskedBubble = true
+    {
+        didSet
+        {
             self.updateBubbleConfig(self.bubbleConfiguration)
             self.setNeedsLayout()
         }
@@ -29,21 +34,30 @@ open class CollectionViewContentNode: ContentNode,ASCollectionDelegate,ASCollect
     
     // MARK: Private Variables
     /** ASCollectionNode as the content of the cell*/
-    fileprivate var collectionViewMessageNode:ASCollectionNode = ASCollectionNode(collectionViewLayout: UICollectionViewFlowLayout())
+    internal var collectionViewMessageNode:ASCollectionNode =
+        ASCollectionNode(collectionViewLayout: UICollectionViewFlowLayout())
+    
     /** [ASDisplayNode] as the posibble data of the cell*/
     fileprivate var collectionViewsDataSource: [ASDisplayNode]?
+    
     /** [UIView] as the posibble data of the cell*/
     fileprivate var viewsForDataSource: [UIView]?
+    
     /** [ASDisplayNode] as the posibble data of the cell*/
     fileprivate var collectionNodesDataSource: [ASDisplayNode]?
+    
     /** CGSize as the max size of a cell in the collection view*/
     fileprivate var cellSize: CGSize = CGSize(width: 1, height: 1)
+    
     /** CGFloat as the number of rows in the collection view*/
     fileprivate var collectionViewNumberOfRows: CGFloat = 1;
+    
     /** CGFloat as the number of rows in the collection view*/
     fileprivate var collectionViewNumberItemInRow: Int = 1;
+    
     /** CGFloat as the space between rows in the collection view*/
     fileprivate var spacingBetweenRows: CGFloat = 4
+    
     /** CGFloat as the space between cells in the collection view*/
     fileprivate var spacingBetweenCells: CGFloat = 4
 
@@ -54,7 +68,11 @@ open class CollectionViewContentNode: ContentNode,ASCollectionDelegate,ASCollect
      - parameter rows: Must be CGFloat. Sets number of rows for the cell.
      Calls helper method to setup cell
      */
-    public init(withCustomViews customViews: [UIView], andNumberOfRows rows:CGFloat, bubbleConfiguration: BubbleConfigurationProtocol? = nil) {
+    public init(
+        withCustomViews customViews: [UIView],
+        andNumberOfRows rows: CGFloat,
+        bubbleConfiguration: BubbleConfigurationProtocol? = nil)
+    {
         super.init(bubbleConfiguration: bubbleConfiguration)
         self.setupCustomViews(customViews,numberOfRows: rows)
     }
@@ -65,16 +83,22 @@ open class CollectionViewContentNode: ContentNode,ASCollectionDelegate,ASCollect
      - parameter rows: Must be CGFloat. Sets number of rows for the cell.
      Calls helper method to setup cell
      */
-    public init(withCustomNodes customNodes:[ASDisplayNode], andNumberOfRows rows:CGFloat, bubbleConfiguration: BubbleConfigurationProtocol? = nil) {
+    public init(
+        withCustomNodes customNodes:[ASDisplayNode],
+        andNumberOfRows rows: CGFloat,
+        bubbleConfiguration: BubbleConfigurationProtocol? = nil)
+    {
         super.init(bubbleConfiguration: bubbleConfiguration)
         self.setupCustomNodes(customNodes,numberOfRows: rows)
     }
     
     // MARK: Initialiser helper methods
     /** Override updateBubbleConfig to set bubble mask */
-    open override func updateBubbleConfig(_ newValue: BubbleConfigurationProtocol) {
+    open override func updateBubbleConfig(_ newValue: BubbleConfigurationProtocol)
+    {
         var maskedBubbleConfig = newValue
         maskedBubbleConfig.isMasked = self.maskedBubble
+        
         super.updateBubbleConfig(maskedBubbleConfig)
     }
     
@@ -83,40 +107,57 @@ open class CollectionViewContentNode: ContentNode,ASCollectionDelegate,ASCollect
      - parameter customViews: Must be [UIView]. Sets views for the cell.
      - parameter rows: Must be CGFloat. Sets number of rows for the cell.
      */
-    fileprivate func setupCustomViews(_ customViews: [UIView], numberOfRows rows:CGFloat)
+    fileprivate func setupCustomViews(
+        _ customViews: [UIView],
+        numberOfRows rows: CGFloat)
     {
-        
-        collectionViewNumberOfRows = rows
-        viewsForDataSource = customViews
-        collectionViewNumberItemInRow = customViews.count/Int(rows)
+        let isSingleRow = (Int(round(rows)) == 1)
+        self.collectionViewNumberOfRows    = rows
+        self.viewsForDataSource            = customViews
+        self.collectionViewNumberItemInRow = customViews.count/Int(rows)
         
         
         if let tmpArray = self.viewsForDataSource
         {
-            self.collectionViewsDataSource = [ASDisplayNode]()
-            for tmpView in tmpArray
+            let tmpArrayAsNodes = tmpArray.map
             {
-                let tmpNode = ASDisplayNode(viewBlock: { () -> UIView in
+                tmpView -> ASDisplayNode in
+                
+                let viewBlock: AsyncDisplayKit.ASDisplayNodeViewBlock =
+                {
+                    () -> UIView in
+                    
                     return tmpView
-                })
+                }
+                
+                let tmpNode = ASDisplayNode(viewBlock: viewBlock)
                 tmpNode.style.preferredSize = tmpView.frame.size
-                self.collectionViewsDataSource?.append(tmpNode)
+                
+                return tmpNode
             }
+            
+            self.collectionViewsDataSource = tmpArrayAsNodes
         }
         
-        let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        if rows==1
+        
+        let flowLayout = UICollectionViewFlowLayout()
+        if (isSingleRow)
         {
             flowLayout.scrollDirection = .horizontal
         }
-        flowLayout.itemSize = cellSize
-        flowLayout.minimumInteritemSpacing = spacingBetweenCells
-        flowLayout.minimumLineSpacing = spacingBetweenRows
-        self.collectionViewMessageNode = ASCollectionNode(collectionViewLayout: flowLayout)
-        self.collectionViewMessageNode.backgroundColor = UIColor.white
         
-        self.collectionViewMessageNode.accessibilityIdentifier = "CollectionViewWithCustomViews"
+        flowLayout.itemSize                = self.cellSize
+        flowLayout.minimumInteritemSpacing = self.spacingBetweenCells
+        flowLayout.minimumLineSpacing      = self.spacingBetweenRows
         
+        
+        let collectionViewMessageNode =
+            ASCollectionNode(collectionViewLayout: flowLayout)
+        
+            collectionViewMessageNode.backgroundColor = UIColor.white
+            collectionViewMessageNode.accessibilityIdentifier = "CollectionViewWithCustomViews"
+
+        self.collectionViewMessageNode = collectionViewMessageNode
         self.addSubnode(collectionViewMessageNode)
     }
     
@@ -125,26 +166,34 @@ open class CollectionViewContentNode: ContentNode,ASCollectionDelegate,ASCollect
      - parameter customViews: Must be [UIView]. Sets views for the cell.
      - parameter rows: Must be CGFloat. Sets number of rows for the cell.
      */
-    fileprivate func setupCustomNodes(_ customNodes: [ASDisplayNode], numberOfRows rows:CGFloat)
+    fileprivate func setupCustomNodes(
+        _ customNodes: [ASDisplayNode],
+        numberOfRows rows: CGFloat)
     {
+        let isSingleRow = (Int(round(rows)) == 1)
         
-        collectionViewNumberOfRows = rows
-        collectionNodesDataSource = customNodes
-        collectionViewNumberItemInRow = customNodes.count/Int(rows)
+        self.collectionViewNumberOfRows    = rows
+        self.collectionNodesDataSource     = customNodes
+        self.collectionViewNumberItemInRow = customNodes.count/Int(rows)
         
         
-        let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        if rows==1
+        let flowLayout = UICollectionViewFlowLayout()
+        if (isSingleRow)
         {
             flowLayout.scrollDirection = .horizontal
         }
         flowLayout.itemSize = cellSize
         flowLayout.minimumInteritemSpacing = spacingBetweenCells
         flowLayout.minimumLineSpacing = spacingBetweenRows
-        self.collectionViewMessageNode = ASCollectionNode(collectionViewLayout: flowLayout)
-        self.collectionViewMessageNode.backgroundColor = UIColor.white
+        
+        let collectionViewMessageNode =
+            ASCollectionNode(collectionViewLayout: flowLayout)
 
-        self.collectionViewMessageNode.accessibilityIdentifier = "CollectionViewWithCustomNodes"
+            collectionViewMessageNode.backgroundColor = UIColor.white
+            
+            collectionViewMessageNode.accessibilityIdentifier = "CollectionViewWithCustomNodes"
+        
+        self.collectionViewMessageNode = collectionViewMessageNode
         self.addSubnode(collectionViewMessageNode)
     }
     
@@ -153,75 +202,119 @@ open class CollectionViewContentNode: ContentNode,ASCollectionDelegate,ASCollect
     /**
      Overriding didLoad to set asyncDataSource and asyncDelegate for collection view
      */
-    override open func didLoad() {
-        
+    override open func didLoad()
+    {
         super.didLoad()
         
-        self.collectionViewMessageNode.delegate = self
+        self.collectionViewMessageNode.delegate   = self
         self.collectionViewMessageNode.dataSource = self
     }
     
     // MARK: Override AsycDisaplyKit Methods
     
-    /**
-     Overriding layoutSpecThatFits to specifiy relatiohsips between elements in the cell
-     */
-    override open func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-
-        let tmpConstrainedSize = ASSizeRange(min: constrainedSize.min, max: CGSize(width: constrainedSize.max.width, height: constrainedSize.max.height))
-        
+    private func updateCellSize(forConstrainedSize tmpConstrainedSize: ASSizeRange)
+    {
         if let tmp = self.collectionViewsDataSource
         {
-            for node in tmp
-            {
-                let nodeLayout = node.layoutThatFits(tmpConstrainedSize)
-                let nodeSize = nodeLayout.size
-                if (isSmaller(cellSize,bigger: nodeSize))
-                {
-                    cellSize=nodeSize
-                }
-            }
+            self.updateCellSizeUsingNodes(
+                tmp,
+                forConstrainedSize: tmpConstrainedSize,
+                shouldUpdatePreferredSizeForEachNode: false)
         }
         else if let tmp = self.collectionNodesDataSource
         {
-            for node in tmp
-            {
-                let nodeLayout = node.layoutThatFits(tmpConstrainedSize)
-                let nodeSize = nodeLayout.size
-                node.style.preferredSize = nodeSize
-                if (isSmaller(cellSize,bigger: nodeSize))
-                {
-                    cellSize=nodeSize
-                }
-            }
+            self.updateCellSizeUsingNodes(
+                tmp,
+                forConstrainedSize: tmpConstrainedSize,
+                shouldUpdatePreferredSizeForEachNode: true)
         }
-        
-        let height = cellSize.height * self.collectionViewNumberOfRows + spacingBetweenRows*(self.collectionViewNumberOfRows-1)
-        
-        var width = constrainedSize.max.width
-        if collectionViewNumberOfRows>1
+
+    }
+    
+    private func updateCellSizeUsingNodes(
+        _ tmp: [ASDisplayNode],
+        forConstrainedSize tmpConstrainedSize: ASSizeRange,
+        shouldUpdatePreferredSizeForEachNode: Bool)
+    {
+        for node in tmp
         {
-            var numOfItems:CGFloat = 0
-            if let viewDataSource = self.collectionViewsDataSource
+            let nodeLayout = node.layoutThatFits(tmpConstrainedSize)
+            let nodeSize = nodeLayout.size
+            
+            if (shouldUpdatePreferredSizeForEachNode)
             {
-                numOfItems = CGFloat(viewDataSource.count)
+                node.style.preferredSize = nodeSize
             }
-            else if let nodeDataSource = self.collectionNodesDataSource
+            
+            if (self.isSmaller(self.cellSize,bigger: nodeSize))
             {
-                numOfItems = CGFloat(nodeDataSource.count)
-            }
-            let numOfColumns = ceil(numOfItems/self.collectionViewNumberOfRows)
-            let tmpWidth = cellSize.width*numOfColumns+spacingBetweenCells*(numOfColumns-1)
-            if tmpWidth<width
-            {
-                width=tmpWidth
+                self.cellSize = nodeSize
             }
         }
+    }
+    
+    private func updateLayoutWidthForMultipleRows(_ width: CGFloat) -> CGFloat
+    {
+        var result = width
         
-        self.collectionViewMessageNode.style.preferredSize = CGSize(width: width, height: height)
+        var numOfItems:CGFloat = 0
+        if let viewDataSource = self.collectionViewsDataSource
+        {
+            numOfItems = CGFloat(viewDataSource.count)
+        }
+        else if let nodeDataSource = self.collectionNodesDataSource
+        {
+            numOfItems = CGFloat(nodeDataSource.count)
+        }
+        let numOfColumns = ceil(numOfItems/self.collectionViewNumberOfRows)
+        let tmpWidth =
+            self.cellSize.width * numOfColumns
+                + self.spacingBetweenCells * (numOfColumns - 1)
+        
+        if (tmpWidth < width)
+        {
+            result = tmpWidth
+        }
+        
+        return result
+    }
+    
+    
+    /**
+     Overriding layoutSpecThatFits to specifiy relatiohsips between elements in the cell
+     */
+    override open func layoutSpecThatFits(
+        _ constrainedSize: ASSizeRange)
+    -> ASLayoutSpec
+    {
+        let isMultipleRows = (self.collectionViewNumberOfRows > 1)
+        
+        // changes `self.cellSize`
+        self.updateCellSize(forConstrainedSize: constrainedSize)
+        
+        
+        let height =
+            self.cellSize.height * self.collectionViewNumberOfRows
+          + self.spacingBetweenRows * (self.collectionViewNumberOfRows - 1)
+        
+        
+        // ===
+        //
+        var width = constrainedSize.max.width
+        if (isMultipleRows)
+        {
+            width = self.updateLayoutWidthForMultipleRows(width)
+        }
+        
+        self.collectionViewMessageNode.style.preferredSize =
+            CGSize(
+                width: width,
+                height: height)
+        
         let tmpSizeSpec = ASAbsoluteLayoutSpec()
-        tmpSizeSpec.sizing = .sizeToFit
-        tmpSizeSpec.children = [self.collectionViewMessageNode]
+            tmpSizeSpec.sizing   = .sizeToFit
+            tmpSizeSpec.children = [self.collectionViewMessageNode]
+        
         return tmpSizeSpec
     }
     
@@ -232,11 +325,18 @@ open class CollectionViewContentNode: ContentNode,ASCollectionDelegate,ASCollect
      - parameter bigger: Must be CGSize
      Checks if one CGSize is smaller than another
      */
-    fileprivate func isSmaller(_ smaller: CGSize, bigger: CGSize) -> Bool {
-        
-        if(smaller.width >= bigger.width) { return false }
-        
-        if(smaller.height >= bigger.height) { return false }
+    fileprivate func isSmaller(
+        _ smaller: CGSize,
+        bigger: CGSize) -> Bool
+    {
+        if (smaller.width >= bigger.width)
+        {
+            return false
+        }
+        if (smaller.height >= bigger.height)
+        {
+            return false
+        }
         
         return true
         
@@ -247,14 +347,30 @@ open class CollectionViewContentNode: ContentNode,ASCollectionDelegate,ASCollect
     /**
      Implementing numberOfSectionsInCollectionView to define number of sections
      */
-    open func numberOfSections(in collectionView: UICollectionView) -> Int {
+    open func numberOfSections(in collectionView: UICollectionView) -> Int
+    {
         return 1
     }
     
     /**
      Implementing numberOfItemsInSection to define number of items in section
      */
-    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    open func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int)
+    -> Int
+    {
+        return self.itemsCount
+    }
+    
+    private var isEmptyItemsList: Bool
+    {
+        let result = (0 == self.itemsCount)
+        return result
+    }
+    
+    private var itemsCount: Int
+    {
         if let viewDataSource = self.collectionViewsDataSource
         {
             return viewDataSource.count
@@ -263,18 +379,34 @@ open class CollectionViewContentNode: ContentNode,ASCollectionDelegate,ASCollect
         {
             return nodeDataSource.count
         }
+        
         return 0
-
+    }
+    
+    private var indexOfLastItem: Int
+    {
+        let result = self.itemsCount - 1
+        return result
     }
     
     /**
      Implementing nodeForItemAtIndexPath to define node at index path
      */
-    open func collectionView(_ collectionView: ASCollectionView, nodeForItemAt indexPath: IndexPath) -> ASCellNode {
+    open func collectionView(
+        _ collectionView: ASCollectionView,
+        nodeForItemAt indexPath: IndexPath)
+    -> ASCellNode
+    {
         var cellNode: ASCellNode = ASCellNode()
         if let nodeDataSource = self.collectionNodesDataSource
         {
-            let node = nodeDataSource[(indexPath as NSIndexPath).row]
+            // TODO: why not `NSIndexPath.item` ???
+            //
+            let castedIndexPath: NSIndexPath =
+                (indexPath as NSIndexPath)
+            let nodeIndex = castedIndexPath.row
+            
+            let node = nodeDataSource[nodeIndex]
             let tmp = CustomContentCellNode(withCustomNode: node)
             
             cellNode = tmp
@@ -286,7 +418,11 @@ open class CollectionViewContentNode: ContentNode,ASCollectionDelegate,ASCollect
     /**
      Implementing constrainedSizeForNodeAtIndexPath the size of each cell
      */
-    open func collectionView(_ collectionView: ASCollectionView, constrainedSizeForNodeAt indexPath: IndexPath) -> ASSizeRange {
+    open func collectionView(
+        _ collectionView: ASCollectionView,
+        constrainedSizeForNodeAt indexPath: IndexPath)
+    -> ASSizeRange
+    {
         return ASSizeRangeMake(cellSize, cellSize);
     }
     
@@ -296,19 +432,38 @@ open class CollectionViewContentNode: ContentNode,ASCollectionDelegate,ASCollect
     /**
      Implementing insetForSectionAtIndex to define space between colums
      */
-    open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    open func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int)
+    -> UIEdgeInsets
+    {
         if self.collectionViewNumberOfRows != 1
         {
-            return UIEdgeInsetsMake(0, 0, 0, 0)
+            return UIEdgeInsets.zero
         }
         else
         {
-            if section != (self.collectionNodesDataSource!.count-1)
+            if (self.isEmptyItemsList)
             {
-                return UIEdgeInsetsMake(0, 0, 0, self.spacingBetweenCells)
+                return UIEdgeInsets.zero
             }
-            return UIEdgeInsetsMake(0, 0, 0, 0)
+            
+            let lastSectionIndex = self.indexOfLastItem
+            precondition(lastSectionIndex >= 0)
+            
+            let isLastSection = (section == lastSectionIndex)
+            
+            if (!isLastSection)
+            {
+                return UIEdgeInsets(
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: self.spacingBetweenCells)
+            }
+            
+            return UIEdgeInsets.zero
         }
     }
-    
 }
