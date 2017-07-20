@@ -86,6 +86,8 @@ open class MultiselectImagePicker: UIViewController
     private func performSave()
     {
         let loaders = self._controller.imageLoadersForSelectedImages()
+        let assets  = self._controller.assetsForSelectedImages()
+        
         self.loadedImages = []
         
         // TODO: maybe move group and mutex to ivars
@@ -104,29 +106,41 @@ open class MultiselectImagePicker: UIViewController
                 [weak weakSelf = self]
                 (maybeImage, _) in
                 
+                defer
+                {
+                    group.leave()
+                }
+                
                 if let singleImage = maybeImage
                 {
                     imageListGuard.lock()
+                    defer
+                    {
+                        imageListGuard.unlock()
+                    }
+                    
                     weakSelf?.loadedImages.append(singleImage)
-                    imageListGuard.unlock()
                 }
-                
-                group.leave()
             }
             singleLoader(loaderCallback)
         }
         
         group.notify(queue: DispatchQueue.main)
         {
-            self.performSave(withImages: self.loadedImages)
+            self.performSave(
+                withImages: self.loadedImages,
+                assets: assets)
         }
     }
     
-    private func performSave(withImages images: [UIImage])
+    private func performSave(
+        withImages images: [UIImage],
+                   assets: [PHAsset])
     {
         // popping current controller will be made by NMessengerBarView
         //
         self.cameraDelegate?.pickedImages(images)
+        self.cameraDelegate?.pickedImageAssets(assets)
     }
     
     private func addGridViewFullScreen()
