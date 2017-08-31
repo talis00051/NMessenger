@@ -154,11 +154,11 @@ The main purpose of chat messages is exchanging them over the network. The topic
 
 Messages management the following two sub-tasks :
 * sending realtime messages
-* receivung realtime messages
+* receiving realtime messages
 * history integration (both sent and received messages)
 
 
-Suppose, our chat service is limited to textin. The service, described below, can use any underlying protocol (such as XMPP, Telegram, etc.). `Disclaimer: your chat service might look differently`.
+Suppose, our chat service is limited to text in. The service, described below, can use any underlying protocol (such as XMPP, Telegram, etc.). `Disclaimer: your chat service might look differently`.
 
 ```swift
 public protocol IChatMessage
